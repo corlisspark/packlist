@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sprinklez in newport</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <h1 style='text-align:center'>Sprinklez - Newport</h1>
+      <div id="post-list"></div>
+    </div>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz6LLkJ-eNIfB-fdLzvjp6UUXEHtTsnUM",
+      authDomain: "cw55hf8nvt.firebaseapp.com",
+      projectId: "cw55hf8nvt",
+      storageBucket: "cw55hf8nvt.appspot.com",
+      messagingSenderId: "535503702954",
+      appId: "1:535503702954:web:bc505ed998e875168e79d3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const postList = document.getElementById("post-list");
+
+    const targetCity = "newport";
+    const targetVendor = "Sprinklez";
+
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (
+        data.location &&
+        data.vendor &&
+        data.location.toLowerCase() === targetCity.toLowerCase() &&
+        data.vendor.toLowerCase() === targetVendor.toLowerCase()
+      ) {
+        const div = document.createElement("div");
+        div.innerHTML = `<a href="../post.html?id=${doc.id}">${data.title} - $${data.price} (${data.location})</a>`;
+        postList.appendChild(div);
+      }
+    });
+  </script>
+</body>
+</html>

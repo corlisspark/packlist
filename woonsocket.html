@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PacksList - Woonsocket</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="main">
+      <h1 style='text-align:center'>Woonsocket</h1>
+      <div id="map" style="height: 200px; width: 100%; border-radius: 12px; margin-bottom: 20px;"></div>
+      <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz6LLkJ-eNIfB-fdLzvjp6UUXEHtTsnUM"></script>
+      <script>
+        const cityMap = new google.maps.Map(document.getElementById('map'), {
+          center: { lat: 42.0029, lng: -71.5148 },
+          zoom: 12,
+          disableDefaultUI: true
+        });
+        new google.maps.Marker({
+          position: { lat: 42.0029, lng: -71.5148 },
+          map: cityMap
+        });
+      </script>
+    
+      <div id="nav-links">
+        <a href="providence.html">Providence</a> |
+        <a href="boston.html">Boston</a> |
+        <a href="woonsocket.html">Woonsocket</a> |
+        <a href="newport.html">Newport</a>
+      </div>
+      
+    <!-- removed filter buttons -->
+      <strong>Filter by Vendor:</strong><br><button onclick="filterVendor('High Tolerance')">High Tolerance</button> <button onclick="filterVendor('Gumbo')">Gumbo</button> <button onclick="filterVendor('Sprinklez')">Sprinklez</button> <button onclick="filterVendor('Deep Fried')">Deep Fried</button> <button onclick="filterVendor('Other')">Other</button> 
+    </div>
+    <!-- script removed(vendorName) {
+        const posts = document.querySelectorAll("#post-list div");
+        posts.forEach(div => {
+          div.style.display = div.dataset.vendor === vendorName || vendorName === 'All' ? 'block' : 'none';
+        });
+      }
+    </script>
+    
+<div id='vendor-links' style='text-align:center; margin-top:20px;' style='text-align:center; margin-top:20px;' style='text-align:center; margin-top:20px;' style='text-align:center; margin-top:20px;'>
+<div><a href="woonsocket/high-tolerance.html">High Tolerance</a></div>
+<div><a href="woonsocket/gumbo.html">Gumbo</a></div>
+<div><a href="woonsocket/sprinklez.html">Sprinklez</a></div>
+<div><a href="woonsocket/deep-fried.html">Deep Fried</a></div>
+<div><a href="woonsocket/other.html">Other</a></div>
+</div>
+<div id="post-list"></div>
+    </div>
+  </div>
+  <script type="module">
+    import {{ initializeApp }} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {{ getFirestore, collection, getDocs }} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {{
+      apiKey: "AIzaSyDz6LLkJ-eNIfB-fdLzvjp6UUXEHtTsnUM",
+      authDomain: "cw55hf8nvt.firebaseapp.com",
+      projectId: "cw55hf8nvt",
+      storageBucket: "cw55hf8nvt.appspot.com",
+      messagingSenderId: "535503702954",
+      appId: "1:535503702954:web:bc505ed998e875168e79d3"
+    }};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const postList = document.getElementById("post-list");
+
+    const targetCity = "Woonsocket";
+
+    const querySnapshot = await getDocs(collection(db, "posts"));
+    querySnapshot.forEach((doc) => {{
+      const data = doc.data();
+      if (data.location && data.location.toLowerCase() === targetCity.toLowerCase()) {{
+        const div = document.createElement("div");
+        div.innerHTML = `<a href="post.html?id=${{doc.id}}">${{data.title}} - $${{data.price}} (${{data.location}})</a>`;
+        postList.appendChild(div);
+      }}
+    }});
+  </script>
+</body>
+</html>
