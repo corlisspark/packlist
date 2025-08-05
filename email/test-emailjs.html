@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test EmailJS Connection - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .warning { background: #fff3cd; color: #856404; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #007bff; color: white; }
+    input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test EmailJS Connection</h1>
+  
+  <div class="status info">
+    <h3>Current Configuration:</h3>
+    <p><strong>Public Key:</strong> 9Ze5FrVKMuju64tuY</p>
+    <p><strong>Service ID:</strong> service_tjfhroa</p>
+    <p><strong>Status:</strong> <span id="init-status">Initializing...</span></p>
+  </div>
+
+  <div class="status warning">
+    <h3>⚠️ Before Testing:</h3>
+    <p>You need to create at least one email template in your EmailJS dashboard:</p>
+    <ol>
+      <li>Go to <a href="https://dashboard.emailjs.com/admin/templates" target="_blank">EmailJS Templates</a></li>
+      <li>Click "Create New Template"</li>
+      <li>Use this simple template for testing:</li>
+    </ol>
+    <div style="background: #f8f9fa; padding: 10px; border-radius: 3px; font-family: monospace; margin: 10px 0;">
+Subject: Test Email from PacksList<br><br>
+Hello!<br><br>
+This is a test email from PacksList.<br><br>
+Message: {{message}}<br>
+From: {{from_name}}<br>
+Email: {{from_email}}<br><br>
+Best regards,<br>
+PacksList Team
+    </div>
+    <p>After creating the template, copy the Template ID and paste it below.</p>
+  </div>
+
+  <form id="test-form">
+    <label for="templateId">Template ID (from EmailJS dashboard):</label>
+    <input type="text" id="templateId" placeholder="template_abc123" required>
+    
+    <label for="testEmail">Your Email (to receive test):</label>
+    <input type="email" id="testEmail" placeholder="your@email.com" required>
+    
+    <button type="submit">Send Test Email</button>
+  </form>
+
+  <div id="results"></div>
+
+  <!-- EmailJS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS with your public key
+    emailjs.init('9Ze5FrVKMuju64tuY');
+    
+    function addResult(content, type = 'info') {
+      const results = document.getElementById('results');
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.innerHTML = content;
+      results.appendChild(div);
+    }
+
+    // Check initialization
+    setTimeout(() => {
+      document.getElementById('init-status').textContent = 'Ready ✅';
+      addResult('📧 EmailJS initialized successfully with your credentials!', 'success');
+    }, 1000);
+
+    document.getElementById('test-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const templateId = document.getElementById('templateId').value;
+      const testEmail = document.getElementById('testEmail').value;
+
+      if (!templateId || !testEmail) {
+        addResult('❌ Please fill in all fields', 'error');
+        return;
+      }
+
+      addResult('🚀 Sending test email...', 'warning');
+
+      try {
+        const templateParams = {
+          to_email: testEmail,
+          from_name: 'PacksList Test',
+          from_email: testEmail,
+          message: 'This is a test email to verify EmailJS is working with PacksList!'
+        };
+
+        const result = await emailjs.send(
+          'service_tjfhroa', // Your service ID
+          templateId,        // Template ID from form
+          templateParams
+        );
+
+        addResult(`✅ <strong>SUCCESS!</strong> Test email sent successfully!<br>
+          <strong>Status:</strong> ${result.status}<br>
+          <strong>Text:</strong> ${result.text}<br><br>
+          📧 Check your email inbox for the test message.`, 'success');
+
+        addResult(`🎉 <strong>EmailJS is now working!</strong><br>
+          Next steps:<br>
+          1. Create the other email templates (welcome, pack notifications, admin alerts)<br>
+          2. Update the template IDs in emailjs-setup.js<br>
+          3. Add EmailJS scripts to your main pages`, 'success');
+
+      } catch (error) {
+        addResult(`❌ <strong>Test Failed!</strong><br>
+          <strong>Error:</strong> ${error.text || error.message}<br><br>
+          <strong>Possible issues:</strong><br>
+          • Invalid Template ID<br>
+          • Email service not connected properly<br>
+          • Rate limiting (wait a moment and try again)`, 'error');
+        
+        console.error('EmailJS Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

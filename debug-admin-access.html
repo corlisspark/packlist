@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Admin Access - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    .info { background: #e3f2fd; color: #1565c0; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+    #debug-info { background: #f5f5f5; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px; white-space: pre-wrap; }
+    .section { background: #f8f9fa; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #4CAF50; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Debug Admin Access</h1>
+  
+  <div class="info">
+    <h3>This tool helps diagnose admin access issues</h3>
+    <p>Use this to check your authentication status and permissions before accessing the admin panel.</p>
+  </div>
+
+  <div class="section">
+    <h3>Current Authentication Status</h3>
+    <button onclick="checkAuthStatus()">Check Auth Status</button>
+    <button onclick="testFirebaseConnection()">Test Firebase Connection</button>
+    <button onclick="testAdminAccess()">Test Admin Access</button>
+    <button onclick="createTestVendor()">Test Vendor Creation</button>
+  </div>
+
+  <div id="debug-info">Click buttons above to see debug information...</div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    let debugInfo = document.getElementById('debug-info');
+    
+    function log(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      debugInfo.textContent += `[${timestamp}] ${message}\n`;
+      console.log(message);
+    }
+    
+    function clearLog() {
+      debugInfo.textContent = '';
+    }
+
+    async function checkAuthStatus() {
+      clearLog();
+      log('=== CHECKING AUTHENTICATION STATUS ===');
+      
+      try {
+        // Check if Firebase is loaded
+        if (typeof firebase === 'undefined') {
+          log('❌ Firebase not loaded');
+          return;
+        }
+        log('✅ Firebase loaded');
+
+        // Check authentication
+        const user = firebase.auth().currentUser;
+        if (user) {
+          log('✅ User is authenticated');
+          log(`   Email: ${user.email}`);
+          log(`   UID: ${user.uid}`);
+          log(`   Email Verified: ${user.emailVerified}`);
+          
+          // Get user token
+          const token = await user.getIdToken();
+          log('✅ Got user token');
+          
+          // Decode token (basic info)
+          const decodedToken = await user.getIdTokenResult();
+          log(`   Token claims: ${JSON.stringify(decodedToken.claims, null, 2)}`);
+          
+        } else {
+          log('❌ User not authenticated');
+          log('   Please sign in first at index.html');
+        }
+        
+      } catch (error) {
+        log(`❌ Error checking auth: ${error.message}`);
+      }
+    }
+
+    async function testFirebaseConnection() {
+      clearLog();
+      log('=== TESTING FIREBASE CONNECTION ===');
+      
+      try {
+        if (!window.db) {
+          log('❌ Firestore not available (window.db is null)');
+          return;
+        }
+        log('✅ Firestore available');
+
+        // Test basic read
+        const testDoc = await db.collection('test').doc('connection').get();
+        log('✅ Firestore connection working');
+        
+      } catch (error) {
+        log(`❌ Firestore error: ${error.message}`);
+        log(`   Error code: ${error.code}`);
+      }
+    }
+
+    async function testAdminAccess() {
+      clearLog();
+      log('=== TESTING ADMIN ACCESS ===');
+      
+      try {
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          log('❌ Not authenticated - please sign in first');
+          return;
+        }
+
+        log('Testing admin_config collection access...');
+        
+        // Try to read admin config
+        const vendorsDoc = await db.collection('admin_config').doc('vendors').get();
+        if (vendorsDoc.exists) {
+          log('✅ Can read admin_config/vendors');
+          const data = vendorsDoc.data();
+          log(`   Found ${data.vendors ? data.vendors.length : 0} vendors`);
+        } else {
+          log('⚠️  admin_config/vendors document does not exist (this is normal for new setups)');
+        }
+
+        // Try to write to admin config
+        log('Testing write access to admin_config...');
+        const testData = {
+          test: true,
+          timestamp: new Date().toISOString(),
+          user: user.email
+        };
+        
+        await db.collection('admin_config').doc('test_access').set(testData);
+        log('✅ Can write to admin_config collection');
+        
+        // Clean up test document
+        await db.collection('admin_config').doc('test_access').delete();
+        log('✅ Can delete from admin_config collection');
+        
+      } catch (error) {
+        log(`❌ Admin access error: ${error.message}`);
+        log(`   Error code: ${error.code}`);
+        
+        if (error.code === 'permission-denied') {
+          log('');
+          log('PERMISSION DENIED SOLUTIONS:');
+          log('1. Make sure you have applied the updated Firebase security rules');
+          log('2. Check that your account email is in the admin list');
+          log('3. Try refreshing the page and signing in again');
+          log('4. Check Firebase Console -> Authentication to verify your account');
+        }
+      }
+    }
+
+    async function createTestVendor() {
+      clearLog();
+      log('=== TESTING VENDOR CREATION ===');
+      
+      try {
+        const user = firebase.auth().currentUser;
+        if (!user) {
+          log('❌ Not authenticated - please sign in first');
+          return;
+        }
+
+        const testVendor = {
+          id: 'test-vendor-' + Date.now(),
+          name: 'Test Vendor',
+          slug: 'test-vendor',
+          color: '#4CAF50',
+          icon: 'T',
+          description: 'Test vendor for debugging',
+          isActive: true,
+          priority: 999
+        };
+
+        log('Creating test vendor...');
+        
+        // Get existing vendors
+        const vendorsDoc = await db.collection('admin_config').doc('vendors').get();
+        let vendors = [];
+        
+        if (vendorsDoc.exists) {
+          vendors = vendorsDoc.data().vendors || [];
+          log(`Found ${vendors.length} existing vendors`);
+        } else {
+          log('No existing vendors found, creating new collection');
+        }
+
+        // Add test vendor
+        vendors.push(testVendor);
+        
+        await db.collection('admin_config').doc('vendors').set({
+          vendors: vendors,
+          lastUpdated: new Date().toISOString(),
+          version: '1.0'
+        });
+        
+        log('✅ Test vendor created successfully!');
+        log(`   Vendor: ${testVendor.name} (${testVendor.id})`);
+        
+        // Remove test vendor
+        log('Cleaning up test vendor...');
+        const updatedVendors = vendors.filter(v => v.id !== testVendor.id);
+        
+        await db.collection('admin_config').doc('vendors').set({
+          vendors: updatedVendors,
+          lastUpdated: new Date().toISOString(),
+          version: '1.0'
+        });
+        
+        log('✅ Test vendor cleaned up successfully');
+        
+      } catch (error) {
+        log(`❌ Vendor creation error: ${error.message}`);
+        log(`   Error code: ${error.code}`);
+      }
+    }
+
+    // Auto-check auth status on page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        log('Page loaded. Checking authentication status...');
+        checkAuthStatus();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

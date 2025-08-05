@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Admin Status - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    .info { background: #e3f2fd; color: #1565c0; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+    #log { background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+    .debug-info { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .debug-info pre { background: white; padding: 10px; border-radius: 3px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Debug Admin Status</h1>
+  <p>This page will help debug why the admin panel isn't recognizing admin access.</p>
+  
+  <div id="status" class="status info">
+    <strong>Status:</strong> <span id="status-text">Checking authentication status...</span>
+  </div>
+  
+  <button onclick="checkAuthStatus()">Check Auth Status</button>
+  <button onclick="forceReloadProfile()">Force Reload Profile</button>
+  <button onclick="testAdminPanel()">Test Admin Panel Access</button>
+  <button onclick="clearLog()">Clear Log</button>
+  
+  <div class="debug-info">
+    <h3>Current User Debug Info:</h3>
+    <div id="user-debug"></div>
+  </div>
+
+  <h3>Log:</h3>
+  <div id="log"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth/auth-manager.js"></script>
+
+  <script>
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'black';
+      logEl.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    function updateStatus(text, type = 'info') {
+      const statusEl = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      statusText.textContent = text;
+      statusEl.className = `status ${type}`;
+    }
+    
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+
+    function updateDebugInfo() {
+      const debugEl = document.getElementById('user-debug');
+      
+      if (!window.authManager) {
+        debugEl.innerHTML = '<div class="error">❌ AuthManager not available</div>';
+        return;
+      }
+
+      const user = window.authManager.currentUser;
+      const profile = window.authManager.currentUserProfile;
+      const isAuthenticated = window.authManager.isAuthenticated;
+      const isAdmin = window.authManager.isAdmin;
+      const isAdminUser = window.authManager.isAdminUser;
+
+      const debugInfo = {
+        'Is Authenticated': isAuthenticated,
+        'Is Admin (internal)': isAdmin,
+        'Is Admin User (getter)': isAdminUser,
+        'User Email': user?.email || 'Not signed in',
+        'User Email Verified': user?.emailVerified || false,
+        'Profile Role': profile?.role || 'No profile',
+        'Profile Permissions': profile?.permissions || 'No permissions',
+        'Profile Created': profile?.createdAt || 'No date',
+        'Auth Manager Initialized': window.authManager.isInitialized
+      };
+
+      let html = '<pre style="font-size: 11px;">';
+      for (const [key, value] of Object.entries(debugInfo)) {
+        const colorClass = 
+          key.includes('Admin') && value ? 'success' :
+          key.includes('Admin') && !value ? 'error' :
+          'info';
+        html += `<div class="${colorClass}"><strong>${key}:</strong> ${JSON.stringify(value)}</div>`;
+      }
+      html += '</pre>';
+
+      debugEl.innerHTML = html;
+    }
+
+    async function checkAuthStatus() {
+      log('=== Checking Authentication Status ===');
+      
+      if (!window.authManager) {
+        log('❌ AuthManager not available', 'error');
+        updateStatus('AuthManager not loaded', 'error');
+        return;
+      }
+
+      log(`✅ AuthManager available and initialized: ${window.authManager.isInitialized}`);
+      
+      const user = window.authManager.currentUser;
+      if (user) {
+        log(`✅ User signed in: ${user.email}`, 'success');
+        log(`📧 Email verified: ${user.emailVerified}`);
+      } else {
+        log('❌ No user signed in', 'error');
+        updateStatus('Not signed in', 'error');
+        return;
+      }
+
+      const profile = window.authManager.currentUserProfile;
+      if (profile) {
+        log(`✅ User profile loaded`, 'success');
+        log(`👤 Role: ${profile.role}`);
+        log(`🔑 Permissions: ${(profile.permissions || []).join(', ')}`);
+      } else {
+        log('❌ No user profile loaded', 'error');
+      }
+
+      const isAdmin = window.authManager.isAdmin;
+      const isAdminUser = window.authManager.isAdminUser;
+      
+      log(`🔍 isAdmin: ${isAdmin}`, isAdmin ? 'success' : 'error');
+      log(`🔍 isAdminUser: ${isAdminUser}`, isAdminUser ? 'success' : 'error');
+
+      if (user.email === 'sxpxru@gmail.com') {
+        log('✅ Email matches expected admin email', 'success');
+        if (!isAdmin) {
+          log('⚠️ But admin status is false - checking profile...', 'warning');
+          await forceReloadProfile();
+        }
+      } else {
+        log(`⚠️ Email (${user.email}) does not match admin email (sxpxru@gmail.com)`, 'warning');
+      }
+
+      updateDebugInfo();
+      
+      if (isAdmin && isAdminUser) {
+        updateStatus('Admin access confirmed!', 'success');
+      } else {
+        updateStatus('Admin access denied', 'error');
+      }
+    }
+
+    async function forceReloadProfile() {
+      log('🔄 Force reloading user profile...');
+      
+      if (!window.authManager || !window.authManager.currentUser) {
+        log('❌ No user to reload profile for', 'error');
+        return;
+      }
+
+      try {
+        await window.authManager.loadUserProfile();
+        await window.authManager.checkAdminStatus();
+        log('✅ Profile reloaded successfully', 'success');
+        updateDebugInfo();
+      } catch (error) {
+        log(`❌ Error reloading profile: ${error.message}`, 'error');
+      }
+    }
+
+    function testAdminPanel() {
+      log('🧪 Testing admin panel access...');
+      
+      if (!window.authManager) {
+        log('❌ AuthManager not available', 'error');
+        return;
+      }
+
+      const hasAccess = window.authManager.requireAdmin();
+      log(`Admin panel access: ${hasAccess ? 'GRANTED' : 'DENIED'}`, hasAccess ? 'success' : 'error');
+      
+      if (hasAccess) {
+        log('🎉 You should be able to access the admin panel!', 'success');
+        log('Try opening: /admin/admin-panel.html', 'info');
+      } else {
+        log('❌ Admin panel access would be denied', 'error');
+      }
+    }
+
+    // Auto-check status when page loads
+    setTimeout(() => {
+      if (window.authManager && window.authManager.isInitialized) {
+        checkAuthStatus();
+      } else {
+        updateStatus('Waiting for auth manager...', 'warning');
+        // Keep checking until ready
+        const interval = setInterval(() => {
+          if (window.authManager && window.authManager.isInitialized) {
+            clearInterval(interval);
+            checkAuthStatus();
+          }
+        }, 1000);
+      }
+    }, 1000);
+
+    // Update debug info every few seconds
+    setInterval(updateDebugInfo, 3000);
+  </script>
+</body>
+</html>

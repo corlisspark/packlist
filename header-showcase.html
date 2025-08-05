@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Header Showcase - PacksList</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <link rel="stylesheet" href="admin/admin-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #f0f2f5;
+    }
+    
+    .showcase-container {
+      padding: 0;
+    }
+    
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    .section-title {
+      text-align: center;
+      padding: 20px;
+      background: white;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    
+    .before, .after {
+      background: white;
+      padding: 20px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .before {
+      background: #fff5f5;
+      border-right: 1px solid #e9ecef;
+    }
+    
+    .after {
+      background: #f0fff4;
+    }
+    
+    .old-header {
+      background: #fff;
+      border-bottom: 1px solid #e9ecef;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .old-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .old-logo-icon {
+      font-size: 24px;
+    }
+    
+    .old-logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: #2d5016;
+    }
+    
+    .old-location-indicator {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6c757d;
+      margin-left: 4px;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 30px;
+      background: white;
+    }
+    
+    .feature-card {
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      border-color: #4CAF50;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+    }
+    
+    .feature-icon {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+    }
+    
+    .feature-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .feature-description {
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 1.5;
+    }
+    
+    .demo-buttons {
+      text-align: center;
+      padding: 30px;
+      background: #f8f9fa;
+    }
+    
+    .demo-buttons button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .demo-buttons button:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="showcase-container">
+    
+    <!-- Before vs After Comparison -->
+    <div class="section">
+      <h2 class="section-title">🎨 Header Enhancement: Before vs After</h2>
+      
+      <div class="comparison">
+        <div class="before">
+          <h3 style="margin-top: 0; color: #dc3545;">❌ Before (Plain)</h3>
+          <div class="old-header">
+            <div class="old-logo">
+              <div class="old-logo-icon">🌿</div>
+              <span class="old-logo-text">PacksList</span>
+              <span class="old-location-indicator">• Providence, RI</span>
+            </div>
+            <div style="display: flex; gap: 8px; font-size: 13px;">
+              <button style="padding: 6px 12px; border: 1px solid #ddd; background: white; border-radius: 4px;">Sign In</button>
+              <button style="padding: 6px 12px; border: 1px solid #4CAF50; background: #4CAF50; color: white; border-radius: 4px;">Sign Up</button>
+            </div>
+          </div>
+          <ul style="margin-top: 15px; color: #6c757d; font-size: 14px;">
+            <li>Small, basic appearance</li>
+            <li>No hover effects</li>
+            <li>Plain location indicator</li>
+            <li>Basic layout</li>
+          </ul>
+        </div>
+        
+        <div class="after">
+          <h3 style="margin-top: 0; color: #28a745;">✅ After (Enhanced)</h3>
+          <!-- Enhanced Header will be rendered here by header-manager.js -->
+          <div class="header" id="enhanced-header-demo">
+            <!-- Header will be dynamically generated -->
+          </div>
+          <ul style="margin-top: 15px; color: #28a745; font-size: 14px;">
+            <li>✨ Larger, more prominent logo</li>
+            <li>🎯 Interactive hover effects</li>
+            <li>📍 Styled location indicator with icon</li>
+            <li>🎨 Gradient background with shadows</li>
+            <li>👆 Clickable logo (goes to home)</li>
+            <li>💫 Smooth animations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Header Demo -->
+    <div class="section">
+      <h2 class="section-title">👑 Enhanced Admin Header</h2>
+      <div style="background: white; padding: 0;">
+        <div class="admin-header" id="admin-header-demo">
+          <!-- Admin header will be generated here -->
+        </div>
+        <div style="padding: 20px; text-align: center; color: #6c757d;">
+          <p>Admin header features dark theme with enhanced branding and professional appearance</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Highlights -->
+    <div class="section">
+      <h2 class="section-title">🚀 Enhancement Features</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <div class="feature-title">Modern Design</div>
+          <div class="feature-description">Gradient backgrounds, shadows, and contemporary styling that looks professional</div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <div class="feature-title">Interactive Effects</div>
+          <div class="feature-description">Hover animations, scaling effects, and smooth transitions for better UX</div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <div class="feature-title">Enhanced Location</div>
+          <div class="feature-description">Styled location indicator with icon and hover effects for better visibility</div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">👆</div>
+          <div class="feature-title">Clickable Logo</div>
+          <div class="feature-description">Logo acts as home button with proper cursor and title attributes</div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <div class="feature-title">Mobile Friendly</div>
+          <div class="feature-description">Responsive design that looks great on all screen sizes</div>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <div class="feature-title">Still Configurable</div>
+          <div class="feature-description">All enhancements work with the dynamic header system</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Demo Buttons -->
+    <div class="demo-buttons">
+      <button onclick="testLogoHover()">🎯 Test Logo Hover</button>
+      <button onclick="testLocationUpdate()">📍 Test Location Update</button>
+      <button onclick="window.open('template-with-dynamic-header.html', '_blank')">🚀 View Full Template</button>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="navigation-manager.js"></script>
+  <script src="header-manager.js"></script>
+  
+  <script>
+    // Initialize headers after page load
+    window.addEventListener('load', () => {
+      // Create header manager instance for demo
+      const demoHeaderManager = new (class extends window.HeaderManager.constructor {
+        renderMainHeader() {
+          const headerContainer = document.getElementById('enhanced-header-demo');
+          if (!headerContainer) return;
+          
+          const headerHTML = `
+            <div class="header-content">
+              <div class="logo" onclick="alert('🏠 Would navigate to home!')" title="Go to PacksList Home">
+                <div class="logo-icon">🌿</div>
+                <span class="logo-text">PacksList</span>
+                <span class="location-indicator" id="location-indicator-demo">Providence, RI</span>
+              </div>
+              <div class="header-actions">
+                <div class="user-info">
+                  <span>Guest</span>
+                </div>
+                <div class="auth-buttons guest-only">
+                  <button class="auth-button">Sign In</button>
+                  <button class="auth-button auth-button-primary">Sign Up</button>
+                </div>
+              </div>
+            </div>
+          `;
+          
+          headerContainer.innerHTML = headerHTML;
+        }
+        
+        renderAdminHeader() {
+          const headerContainer = document.getElementById('admin-header-demo');
+          if (!headerContainer) return;
+          
+          const headerHTML = `
+            <div class="admin-header-content">
+              <div class="admin-logo" onclick="alert('🏠 Would navigate to main site!')" title="Go to PacksList">
+                <div class="logo-icon">🌿</div>
+                <span class="logo-text">PacksList Admin</span>
+              </div>
+              <div class="admin-header-actions">
+                <div class="admin-user-info">
+                  <span>Admin User</span>
+                  <span class="admin-badge">👑</span>
+                </div>
+                <button class="btn btn-outline btn-sm">🏠 Back to Site</button>
+                <button class="btn btn-link btn-sm">Sign Out</button>
+              </div>
+            </div>
+          `;
+          
+          headerContainer.innerHTML = headerHTML;
+        }
+      })();
+      
+      // Render both headers
+      demoHeaderManager.renderMainHeader();
+      demoHeaderManager.renderAdminHeader();
+      
+      console.log('✅ Header showcase initialized');
+    });
+    
+    // Demo functions
+    function testLogoHover() {
+      const logo = document.querySelector('#enhanced-header-demo .logo');
+      if (logo) {
+        logo.style.transform = 'translateY(-2px) scale(1.05)';
+        logo.style.boxShadow = '0 6px 20px rgba(46, 80, 22, 0.25)';
+        
+        setTimeout(() => {
+          logo.style.transform = '';
+          logo.style.boxShadow = '';
+        }, 1000);
+        
+        alert('✨ Logo hover effect demonstrated!');
+      }
+    }
+    
+    function testLocationUpdate() {
+      const indicator = document.getElementById('location-indicator-demo');
+      if (indicator) {
+        const locations = ['Boston, MA', 'New York, NY', 'Providence, RI'];
+        let current = 0;
+        
+        const updateLocation = () => {
+          indicator.textContent = locations[current];
+          indicator.style.background = 'rgba(76, 175, 80, 0.2)';
+          current = (current + 1) % locations.length;
+          
+          setTimeout(() => {
+            indicator.style.background = '';
+          }, 500);
+        };
+        
+        updateLocation();
+        const interval = setInterval(updateLocation, 1500);
+        
+        setTimeout(() => {
+          clearInterval(interval);
+          indicator.textContent = 'Providence, RI';
+        }, 5000);
+        
+        alert('📍 Location update demo started! Watch the header.');
+      }
+    }
+  </script>
+</body>
+</html>

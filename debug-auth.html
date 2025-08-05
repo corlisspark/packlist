@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Auth - PacksList</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+</head>
+<body>
+  <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+    <h1>Authentication Debug Page</h1>
+    
+    <div style="margin: 20px 0;">
+      <button id="test-sign-in" class="auth-button">Test Sign In Modal</button>
+      <button id="test-sign-up" class="auth-button auth-button-primary">Test Sign Up Modal</button>
+      <button id="resend-email-verification" class="auth-button">Resend Email Verification</button>
+    </div>
+    
+    <div style="margin: 20px 0; padding: 20px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px;">
+      <h3>Admin Account Email Verification</h3>
+      <p>Enter your admin email to sign in and resend verification:</p>
+      <div style="margin: 10px 0;">
+        <input type="email" id="admin-email" placeholder="Enter admin email" style="padding: 8px; width: 250px; margin-right: 10px;">
+        <input type="password" id="admin-password" placeholder="Enter password" style="padding: 8px; width: 150px; margin-right: 10px;">
+        <button id="admin-signin-resend" class="auth-button">Sign In & Resend Verification</button>
+      </div>
+    </div>
+    
+    <div style="margin: 20px 0; padding: 20px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px;">
+      <h3>Email Verification Bypass Controls</h3>
+      <p><strong>Admin emails automatically bypass:</strong> sxpxru@gmail.com, admin@packslist.com</p>
+      <div style="margin: 10px 0;">
+        <label style="display: flex; align-items: center; margin: 10px 0;">
+          <input type="checkbox" id="global-bypass" style="margin-right: 10px;">
+          <span>Enable Global Email Verification Bypass (All Users)</span>
+        </label>
+        <button id="check-bypass-status" class="auth-button">Check Current Bypass Status</button>
+      </div>
+    </div>
+    
+    <div id="debug-info" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3>Debug Information:</h3>
+      <div id="debug-output"></div>
+    </div>
+    
+    <div id="console-log" style="background: #2c3e50; color: white; padding: 20px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;">
+      <h4 style="color: white; margin-top: 0;">Console Output:</h4>
+      <div id="console-output"></div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  
+  <!-- PacksList Scripts -->
+  <script src="config-manager.js"></script>
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+  <script src="auth/auth-modals.js"></script>
+
+  <script>
+    // Override console.log to capture output
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    function addToConsole(type, ...args) {
+      const consoleOutput = document.getElementById('console-output');
+      const timestamp = new Date().toLocaleTimeString();
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      
+      const logEntry = document.createElement('div');
+      logEntry.style.marginBottom = '5px';
+      logEntry.style.color = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#ecf0f1';
+      logEntry.innerHTML = `<span style="color: #95a5a6;">[${timestamp}]</span> <span style="color: #3498db;">${type.toUpperCase()}:</span> ${message}`;
+      
+      consoleOutput.appendChild(logEntry);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+    
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      addToConsole('log', ...args);
+    };
+    
+    console.error = function(...args) {
+      originalError.apply(console, args);
+      addToConsole('error', ...args);
+    };
+    
+    console.warn = function(...args) {
+      originalWarn.apply(console, args);
+      addToConsole('warn', ...args);
+    };
+    
+    // Debug function
+    function updateDebugInfo() {
+      const debugOutput = document.getElementById('debug-output');
+      const info = {
+        'Firebase loaded': typeof firebase !== 'undefined',
+        'Firebase app initialized': typeof firebase !== 'undefined' && firebase.apps.length > 0,
+        'Auth manager exists': typeof window.authManager !== 'undefined',
+        'Auth modals exists': typeof window.authModals !== 'undefined',
+        'Config manager exists': typeof window.configManager !== 'undefined',
+        'Input validator exists': typeof window.inputValidator !== 'undefined'
+      };
+      
+      debugOutput.innerHTML = Object.entries(info).map(([key, value]) => 
+        `<div><strong>${key}:</strong> <span style="color: ${value ? 'green' : 'red'}">${value ? '✅ Yes' : '❌ No'}</span></div>`
+      ).join('');
+    }
+    
+    // Test functions
+    function testSignIn() {
+      console.log('Testing sign in modal...');
+      try {
+        if (window.authModals) {
+          window.authModals.showSignIn();
+          console.log('Sign in modal should be visible now');
+        } else {
+          console.error('authModals not available');
+        }
+      } catch (error) {
+        console.error('Error showing sign in modal:', error);
+      }
+    }
+    
+    function testSignUp() {
+      console.log('Testing sign up modal...');
+      try {
+        if (window.authModals) {
+          window.authModals.showSignUp();
+          console.log('Sign up modal should be visible now');
+        } else {
+          console.error('authModals not available');
+        }
+      } catch (error) {
+        console.error('Error showing sign up modal:', error);
+      }
+    }
+    
+    function resendEmailVerification() {
+      console.log('Testing resend email verification...');
+      try {
+        if (window.authManager) {
+          if (window.authManager.currentUser) {
+            window.authManager.sendEmailVerification().then(result => {
+              if (result.success) {
+                console.log('✅ Email verification sent successfully');
+              } else {
+                console.error('❌ Failed to send email verification:', result.error);
+              }
+            });
+          } else {
+            console.warn('⚠️ No user is currently signed in');
+          }
+        } else {
+          console.error('authManager not available');
+        }
+      } catch (error) {
+        console.error('Error resending email verification:', error);
+      }
+    }
+    
+    async function adminSignInAndResend() {
+      console.log('Admin sign in and resend verification...');
+      const email = document.getElementById('admin-email').value;
+      const password = document.getElementById('admin-password').value;
+      
+      if (!email || !password) {
+        console.error('❌ Please enter both email and password');
+        return;
+      }
+      
+      try {
+        if (window.authManager) {
+          console.log(`🔑 Attempting to sign in as: ${email}`);
+          
+          const signInResult = await window.authManager.signIn(email, password);
+          
+          if (signInResult.success) {
+            console.log('✅ Sign in successful');
+            
+            // Wait a moment for auth state to update
+            setTimeout(async () => {
+              if (window.authManager.currentUser) {
+                console.log(`📧 Current user email verified: ${window.authManager.currentUser.emailVerified}`);
+                console.log(`📧 User email: ${window.authManager.currentUser.email}`);
+                console.log(`📧 User UID: ${window.authManager.currentUser.uid}`);
+                
+                try {
+                  // Try Firebase's native method directly
+                  console.log('🔄 Calling Firebase sendEmailVerification directly...');
+                  await window.authManager.currentUser.sendEmailVerification();
+                  console.log('✅ Firebase sendEmailVerification called successfully');
+                  
+                  // Also try through auth manager
+                  const verificationResult = await window.authManager.sendEmailVerification();
+                  
+                  if (verificationResult.success) {
+                    console.log('✅ AuthManager email verification sent successfully to ' + email);
+                  } else {
+                    console.error('❌ AuthManager failed to send email verification:', verificationResult.error);
+                  }
+                } catch (error) {
+                  console.error('❌ Direct Firebase sendEmailVerification error:', error);
+                  console.error('Error code:', error.code);
+                  console.error('Error message:', error.message);
+                }
+              } else {
+                console.error('❌ No current user found after sign in');
+              }
+            }, 1000);
+          } else {
+            console.error('❌ Sign in failed:', signInResult.error);
+          }
+        } else {
+          console.error('❌ authManager not available');
+        }
+      } catch (error) {
+        console.error('❌ Error during admin sign in and resend:', error);
+      }
+    }
+    
+    function toggleGlobalBypass() {
+      const checkbox = document.getElementById('global-bypass');
+      window.BYPASS_EMAIL_VERIFICATION = checkbox.checked;
+      
+      if (checkbox.checked) {
+        console.log('🚫 Global email verification bypass ENABLED');
+      } else {
+        console.log('✅ Global email verification bypass DISABLED');
+      }
+    }
+    
+    function checkBypassStatus() {
+      console.log('📊 Email Verification Bypass Status:');
+      console.log('  - Global bypass:', window.BYPASS_EMAIL_VERIFICATION || false);
+      
+      if (window.authManager?.currentUser) {
+        const user = window.authManager.currentUser;
+        const profile = window.authManager.currentUserProfile;
+        
+        console.log('  - Current user:', user.email);
+        console.log('  - Email verified:', user.emailVerified);
+        console.log('  - User role:', profile?.role || 'user');
+        
+        if (window.authManager.shouldBypassEmailVerification) {
+          const shouldBypass = window.authManager.shouldBypassEmailVerification();
+          console.log('  - Would bypass verification:', shouldBypass);
+        }
+      } else {
+        console.log('  - No user currently signed in');
+      }
+    }
+    
+    // Wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded');
+      
+      // Update debug info initially and every 2 seconds
+      updateDebugInfo();
+      setInterval(updateDebugInfo, 2000);
+      
+      // Add event listeners
+      document.getElementById('test-sign-in').addEventListener('click', testSignIn);
+      document.getElementById('test-sign-up').addEventListener('click', testSignUp);
+      document.getElementById('resend-email-verification').addEventListener('click', resendEmailVerification);
+      document.getElementById('admin-signin-resend').addEventListener('click', adminSignInAndResend);
+      document.getElementById('global-bypass').addEventListener('change', toggleGlobalBypass);
+      document.getElementById('check-bypass-status').addEventListener('click', checkBypassStatus);
+      
+      console.log('Debug page initialized');
+    });
+    
+    // Check for errors
+    window.addEventListener('error', function(e) {
+      console.error('JavaScript error:', e.error);
+    });
+    
+    // Check Firebase initialization
+    setTimeout(() => {
+      console.log('Checking Firebase initialization...');
+      if (typeof firebase !== 'undefined') {
+        console.log('Firebase is available');
+        if (firebase.apps.length > 0) {
+          console.log('Firebase app is initialized');
+        } else {
+          console.warn('Firebase app not initialized');
+        }
+      } else {
+        console.error('Firebase not loaded');
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

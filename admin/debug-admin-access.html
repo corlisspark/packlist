@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Admin Access - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .debug { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .warning { background: #fff3cd; color: #856404; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    pre { background: white; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Debug Admin Access</h1>
+  
+  <button onclick="debugCurrentState()">Check Current Auth State</button>
+  <button onclick="testRequireAdmin()">Test requireAdmin()</button>
+  <button onclick="forceCheckAdminStatus()">Force Check Admin Status</button>
+  
+  <div id="results"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../auth/auth-manager.js"></script>
+
+  <script>
+    function addResult(content, type = 'debug') {
+      const results = document.getElementById('results');
+      const div = document.createElement('div');
+      div.className = `debug ${type}`;
+      div.innerHTML = content;
+      results.appendChild(div);
+    }
+
+    function debugCurrentState() {
+      addResult('<h3>🔍 Current Authentication State</h3>');
+      
+      if (!window.authManager) {
+        addResult('<strong>❌ window.authManager not found!</strong>', 'error');
+        return;
+      }
+
+      const user = window.authManager.currentUser;
+      const profile = window.authManager.currentUserProfile;
+      
+      const state = {
+        'AuthManager exists': !!window.authManager,
+        'AuthManager initialized': window.authManager.isInitialized,
+        'User signed in': !!user,
+        'User email': user?.email || 'None',
+        'Email verified': user?.emailVerified || false,
+        'User profile exists': !!profile,
+        'Profile role': profile?.role || 'None',
+        'Profile permissions': profile?.permissions || 'None',
+        'IsAdmin (internal)': window.authManager.isAdmin,
+        'IsAdminUser (getter)': window.authManager.isAdminUser,
+        'Is Authenticated': window.authManager.isAuthenticated,
+        'Is Email Verified': window.authManager.isEmailVerified
+      };
+
+      let html = '<pre>';
+      for (const [key, value] of Object.entries(state)) {
+        const status = (key.includes('Admin') && value) || (key.includes('signed in') && value) ? '✅' : 
+                      (key.includes('Admin') && !value) || (key.includes('signed in') && !value) ? '❌' : '📋';
+        html += `${status} ${key}: ${JSON.stringify(value)}\n`;
+      }
+      html += '</pre>';
+      
+      addResult(html);
+    }
+
+    function testRequireAdmin() {
+      addResult('<h3>🧪 Testing requireAdmin() Method</h3>');
+      
+      if (!window.authManager) {
+        addResult('<strong>❌ window.authManager not found!</strong>', 'error');
+        return;
+      }
+
+      try {
+        console.log('=== Testing requireAdmin() ===');
+        const result = window.authManager.requireAdmin();
+        
+        if (result) {
+          addResult('<strong>✅ requireAdmin() returned TRUE - Admin access granted!</strong>', 'success');
+        } else {
+          addResult('<strong>❌ requireAdmin() returned FALSE - Admin access denied</strong>', 'error');
+        }
+        
+        addResult('<p>Check the browser console for detailed debug output from requireAdmin()</p>', 'warning');
+        
+      } catch (error) {
+        addResult(`<strong>❌ Error calling requireAdmin(): ${error.message}</strong>`, 'error');
+      }
+    }
+
+    async function forceCheckAdminStatus() {
+      addResult('<h3>🔄 Force Checking Admin Status</h3>');
+      
+      if (!window.authManager) {
+        addResult('<strong>❌ window.authManager not found!</strong>', 'error');
+        return;
+      }
+
+      try {
+        await window.authManager.checkAdminStatus();
+        addResult('<strong>✅ Admin status check completed</strong>', 'success');
+        debugCurrentState();
+      } catch (error) {
+        addResult(`<strong>❌ Error checking admin status: ${error.message}</strong>`, 'error');
+      }
+    }
+
+    // Auto-check when page loads
+    setTimeout(() => {
+      if (window.authManager && window.authManager.isInitialized) {
+        debugCurrentState();
+      } else {
+        addResult('<strong>⏳ Waiting for auth manager to initialize...</strong>', 'warning');
+        const interval = setInterval(() => {
+          if (window.authManager && window.authManager.isInitialized) {
+            clearInterval(interval);
+            debugCurrentState();
+          }
+        }, 500);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

@@ -1,23 +1,114 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>PacksList - Home</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PacksList - Local Delivery</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="container">
-    <div id="main">
-      <h1 style="text-align:center;">Welcome to PacksList</h1>
-      <p style="text-align:center;">Choose your city to view local packs:</p>
-      <div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:20px;">
-        <a href="providence.html">Providence</a>
-        <a href="boston.html">Boston</a>
-        <a href="woonsocket.html">Woonsocket</a>
-        <a href="newport.html">Newport</a>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <!-- Dynamic header content will be rendered here by header-manager.js -->
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Map Container -->
+      <div class="map-container">
+        <div id="map"></div>
+        
+        <!-- Floating Search Overlay -->
+        <div class="floating-search-overlay">
+          <div class="floating-search-box">
+            <div class="search-input-container">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="search-input" placeholder="Plugs 🔌🔌" autocomplete="off">
+              <button class="search-clear-btn" id="search-clear-btn" style="display: none;">✕</button>
+            </div>
+            
+            <!-- Search Autocomplete Dropdown -->
+            <div class="search-dropdown" id="search-dropdown" style="display: none;">
+              <div class="search-results" id="search-results">
+                <!-- Results will be populated here -->
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Search Area Button -->
+          <div class="search-area-container" id="search-area-container" style="display: none;">
+            <button class="search-area-btn" id="search-area-btn">
+              🔍 Search this area
+            </button>
+          </div>
+        </div>
+        
+        <button class="location-btn" id="location-btn">📍</button>
       </div>
     </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="bottom-toolbar">
+      <nav class="toolbar-nav">
+        <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+      </nav>
+    </div>
+
+    <!-- Selected Vendor Details Modal -->
+    <div class="vendor-modal" id="vendor-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button class="close-btn" id="close-modal">✕</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+          <!-- Vendor details will be populated here -->
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="config-manager.js"></script>
+  <script src="cache-manager.js"></script>
+  <script src="content-manager.js"></script>
+  <script src="navigation-manager.js"></script>
+  <script src="page-manager.js"></script>
+  <script src="vendor-manager.js"></script>
+  <script src="dynamic-location-manager.js"></script>
+  <script src="location-utils.js"></script>
+  <script src="search-utils.js"></script>
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+  <script src="auth/auth-modals.js"></script>
+  <script src="auth/onboarding-manager.js"></script>
+  <script src="notifications/notification-manager.js"></script>
+  <script src="header-manager.js"></script>
+  <script src="map/map-integration.js"></script>
+  <script src="email/emailjs-setup.js"></script>
+  <script src="email/email-integration.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Load Google Maps API asynchronously with proper loading pattern
+    function loadGoogleMaps() {
+      const script = document.createElement('script');
+      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDz6LLkJ-eNIfB-fdLzvjp6UUXEHtTsnUM&callback=initMap&loading=async';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+    
+    // Load Maps API after other scripts are ready
+    window.addEventListener('load', loadGoogleMaps);
+  </script>
 </body>
 </html>

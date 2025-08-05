@@ -1,28 +1,731 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>New Post</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Pack - PacksList</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      margin-bottom: 100px;
+    }
+    
+    .form-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      font-size: 16px;
+      color: #333;
+      background: #fff;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+    
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 10px;
+    }
+    
+    .submit-btn:hover {
+      background: #218838;
+    }
+    
+    .submit-btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #f5c6cb;
+    }
+    
+    .image-upload-container {
+      position: relative;
+    }
+    
+    .image-input {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    
+    .image-upload-area {
+      border: 2px dashed #e9ecef;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      background: #f8f9fa;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .image-upload-area:hover {
+      border-color: #28a745;
+      background: #f0f8f0;
+    }
+    
+    .image-upload-area.dragover {
+      border-color: #28a745;
+      background: #e8f5e8;
+    }
+    
+    .upload-placeholder {
+      pointer-events: none;
+    }
+    
+    .upload-icon {
+      font-size: 48px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    
+    .upload-placeholder p {
+      margin: 8px 0 4px;
+      font-weight: 500;
+      color: #495057;
+    }
+    
+    .upload-placeholder small {
+      color: #6c757d;
+      font-size: 12px;
+    }
+    
+    .image-preview-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .image-preview {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #e9ecef;
+    }
+    
+    .image-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .image-remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(220, 53, 69, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .form-help-text {
+      font-size: 12px;
+      color: #6c757d;
+      margin-top: 4px;
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <div id="container">
-    <div id="main">
-      <h1>Create New Pack</h1>
-      <form id="postForm">
-        <label>Title</label>
-        <input type="text" placeholder="Title" id="title" required />
-        <label>Price</label>
-        <input type="text" placeholder="Price" id="price" required />
-        <label>Location</label>
-        <input type="text" placeholder="Location" id="location" required />
-        <label>Description</label>
-        <textarea placeholder="Description" id="description" rows="6"></textarea>
-        <button type="submit">Post Pack</button>
-      </form>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🌿</div>
+          <span class="logo-text">PacksList</span>
+          <span class="location-indicator" id="location-indicator">• Detecting...</span>
+        </div>
+        <div class="header-actions">
+          <nav class="header-nav">
+            <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content" style="padding: 20px;">
+      <div class="form-container">
+        <h1 class="form-title">Post a New Pack</h1>
+        
+        <div id="message-container"></div>
+        
+        <form id="postForm">
+          <div class="form-group">
+            <label class="form-label">Product Title</label>
+            <input type="text" id="title" class="form-input" placeholder="e.g. Blue Dream - Premium Indoor" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Price</label>
+            <input type="text" id="price" class="form-input" placeholder="e.g. 45" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="description" class="form-textarea" placeholder="Describe your product quality, effects, etc." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Product Images</label>
+            <div class="image-upload-container">
+              <input type="file" id="images" class="image-input" accept="image/*" multiple>
+              <div class="image-upload-area" id="image-upload-area">
+                <div class="upload-placeholder">
+                  <span class="upload-icon">📷</span>
+                  <p>Click to add photos or drag and drop</p>
+                  <small>Images automatically compressed for fast uploads</small>
+                </div>
+              </div>
+              <div class="image-preview-container" id="image-preview-container"></div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Vendor/Brand</label>
+            <select id="vendor" class="form-select" required>
+              <option value="">Loading vendors...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <select id="city" class="form-select" required>
+              <option value="">Detecting your location...</option>
+            </select>
+            <small class="form-help-text">We'll suggest nearby areas based on your location</small>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">
+            📦 Post Pack
+          </button>
+        </form>
+      </div>
     </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="bottom-toolbar">
+      <nav class="toolbar-nav">
+        <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+      </nav>
+    </div>
+
   </div>
-  <script type="module" src="new.js"></script>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+  <script src="config-manager.js"></script>
+  <script src="cache-manager.js"></script>
+  <script src="content-manager.js"></script>
+  <script src="navigation-manager.js"></script>
+  <script src="page-manager.js"></script>
+  <script src="vendor-manager.js"></script>
+  <script src="dynamic-location-manager.js"></script>
+  <script src="location-utils.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDWkbZRee5HZHTRKucfH-6rXezkgmMy29k",
+      authDomain: "cw55hf8nvt.firebaseapp.com",
+      projectId: "cw55hf8nvt",
+      storageBucket: "cw55hf8nvt.appspot.com",
+      messagingSenderId: "535503702954",
+      appId: "1:535503702954:web:bc505ed998e875168e79d3",
+      measurementId: "G-02Z8PLPMN0"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    const form = document.getElementById("postForm");
+    const submitBtn = document.getElementById("submit-btn");
+    const messageContainer = document.getElementById("message-container");
+    
+    // Image upload variables
+    let selectedImages = [];
+    const imageInput = document.getElementById("images");
+    const imageUploadArea = document.getElementById("image-upload-area");
+    const imagePreviewContainer = document.getElementById("image-preview-container");
+    
+    // Initialize location awareness
+    initializeLocationAwareness();
+    
+    // Initialize vendor dropdown
+    initializeVendorDropdown();
+    
+    // Initialize vendor dropdown with dynamic data
+    async function initializeVendorDropdown() {
+      try {
+        // Wait for vendor manager to be ready
+        let attempts = 0;
+        while (!window.vendorManager && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (window.vendorManager) {
+          await window.vendorManager.initialize();
+          populateVendorOptions();
+          
+          // Listen for vendor updates
+          document.addEventListener('vendorsLoaded', populateVendorOptions);
+        } else {
+          console.warn('VendorManager not available, using fallback options');
+          populateFallbackVendorOptions();
+        }
+      } catch (error) {
+        console.error('Error initializing vendor dropdown:', error);
+        populateFallbackVendorOptions();
+      }
+    }
+    
+    // Populate vendor options from vendor manager
+    function populateVendorOptions() {
+      const vendorSelect = document.getElementById('vendor');
+      const vendors = window.vendorManager.getActiveVendors();
+      
+      vendorSelect.innerHTML = '<option value="">Select Vendor</option>';
+      
+      vendors.forEach(vendor => {
+        const option = document.createElement('option');
+        option.value = vendor.slug;
+        option.textContent = vendor.name;
+        vendorSelect.appendChild(option);
+      });
+      
+      // Add "Other" option
+      const otherOption = document.createElement('option');
+      otherOption.value = 'other';
+      otherOption.textContent = 'Other';
+      vendorSelect.appendChild(otherOption);
+    }
+    
+    // Fallback vendor options if dynamic system isn't available
+    function populateFallbackVendorOptions() {
+      const vendorSelect = document.getElementById('vendor');
+      vendorSelect.innerHTML = `
+        <option value="">Select Vendor</option>
+        <option value="other">Other</option>
+      `;
+    }
+    
+    async function initializeLocationAwareness() {
+      try {
+        // Wait for dynamic location manager to be ready
+        let attempts = 0;
+        while (!window.dynamicLocationManager && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        
+        if (window.dynamicLocationManager) {
+          await window.dynamicLocationManager.initialize();
+          updateLocationDisplay();
+          populateCityOptions();
+          
+          // Listen for location changes
+          if (window.dynamicLocationManager.onLocationChange) {
+            window.dynamicLocationManager.onLocationChange((location, metro) => {
+              updateLocationDisplay();
+              populateCityOptions();
+            });
+          }
+        } else {
+          console.warn('DynamicLocationManager not available');
+          updateLocationDisplay('Location unavailable');
+          populateDefaultCityOptions();
+        }
+      } catch (error) {
+        console.error('Location initialization error:', error);
+        updateLocationDisplay('Location unavailable');
+        populateDefaultCityOptions();
+      }
+    }
+    
+    // Update location display in header
+    function updateLocationDisplay(customText = null) {
+      const indicator = document.getElementById('location-indicator');
+      if (indicator) {
+        if (customText) {
+          indicator.textContent = `• ${customText}`;
+        } else {
+          const locationText = window.dynamicLocationManager ? 
+            window.dynamicLocationManager.getLocationDisplayText() : 
+            'Location Detection';
+          indicator.textContent = `• ${locationText}`;
+        }
+      }
+    }
+    
+    // Populate city options based on user location
+    function populateCityOptions() {
+      const citySelect = document.getElementById('city');
+      
+      if (!window.dynamicLocationManager) {
+        populateDefaultCityOptions();
+        return;
+      }
+      
+      const suggestedCities = window.dynamicLocationManager.getSuggestedCities();
+      
+      citySelect.innerHTML = '<option value="">Select your city</option>';
+      
+      // Add "Near you" section
+      if (suggestedCities.length > 0) {
+        const nearYouGroup = document.createElement('optgroup');
+        nearYouGroup.label = 'Near you';
+        
+        suggestedCities.slice(0, 4).forEach(city => {
+          const option = document.createElement('option');
+          option.value = city.value;
+          option.textContent = city.name + (city.distance > 0 ? ` (${city.distance.toFixed(1)} mi)` : '');
+          nearYouGroup.appendChild(option);
+        });
+        
+        citySelect.appendChild(nearYouGroup);
+      }
+      
+      // Add "Other areas" section from dynamic location manager
+      const otherGroup = document.createElement('optgroup');
+      otherGroup.label = 'Other areas';
+      
+      const allCities = window.dynamicLocationManager.getAllCities();
+      const suggestedValues = suggestedCities.map(c => c.value);
+      
+      allCities.forEach(city => {
+        if (!suggestedValues.includes(city.value)) {
+          const option = document.createElement('option');
+          option.value = city.value;
+          option.textContent = city.name;
+          otherGroup.appendChild(option);
+        }
+      });
+      
+      citySelect.appendChild(otherGroup);
+    }
+    
+    // Fallback city options
+    function populateDefaultCityOptions() {
+      const citySelect = document.getElementById('city');
+      citySelect.innerHTML = `
+        <option value="">Select City</option>
+        <option value="other">Other Location</option>
+      `;
+    }
+
+    function showMessage(message, type = 'success') {
+      messageContainer.innerHTML = `<div class="${type}-message">${message}</div>`;
+      setTimeout(() => {
+        messageContainer.innerHTML = '';
+      }, 5000);
+    }
+
+    // Image upload functionality
+    function setupImageUpload() {
+      // Handle file input change
+      imageInput.addEventListener('change', handleFileSelect);
+      
+      // Handle drag and drop
+      imageUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        imageUploadArea.classList.add('dragover');
+      });
+      
+      imageUploadArea.addEventListener('dragleave', () => {
+        imageUploadArea.classList.remove('dragover');
+      });
+      
+      imageUploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        imageUploadArea.classList.remove('dragover');
+        handleFileSelect({ target: { files: e.dataTransfer.files } });
+      });
+      
+      // Handle click on upload area
+      imageUploadArea.addEventListener('click', () => {
+        imageInput.click();
+      });
+    }
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      
+      files.forEach(file => {
+        if (file.type.startsWith('image/')) {
+          if (selectedImages.length < 5) { // Max 5 images
+            compressImage(file).then(compressedFile => {
+              selectedImages.push(compressedFile);
+              displayImagePreview(compressedFile);
+            }).catch(error => {
+              console.error('Error compressing image:', error);
+              showMessage('Error processing image', 'error');
+            });
+          } else {
+            showMessage('Maximum 5 images allowed', 'error');
+          }
+        } else {
+          showMessage('Please select only image files', 'error');
+        }
+      });
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+          // Set max dimensions for compression
+          const maxWidth = 800;
+          const maxHeight = 600;
+          
+          let { width, height } = img;
+          
+          // Calculate new dimensions maintaining aspect ratio
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Draw and compress
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                // Create new file with compressed data
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error('Compression failed'));
+              }
+            },
+            'image/jpeg',
+            0.7 // 70% quality for good compression
+          );
+        };
+        
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = URL.createObjectURL(file);
+      });
+    }
+
+    function displayImagePreview(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const previewDiv = document.createElement('div');
+        previewDiv.className = 'image-preview';
+        previewDiv.innerHTML = `
+          <img src="${e.target.result}" alt="Preview">
+          <button type="button" class="image-remove-btn" onclick="removeImage('${file.name}')">×</button>
+        `;
+        imagePreviewContainer.appendChild(previewDiv);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeImage(fileName) {
+      selectedImages = selectedImages.filter(file => file.name !== fileName);
+      updateImagePreviews();
+    }
+
+    function updateImagePreviews() {
+      imagePreviewContainer.innerHTML = '';
+      selectedImages.forEach(file => displayImagePreview(file));
+    }
+
+    async function uploadImages() {
+      const imageUrls = [];
+      
+      console.log('Starting image upload process...');
+      console.log('Selected images:', selectedImages.length);
+      
+      for (let i = 0; i < selectedImages.length; i++) {
+        const file = selectedImages[i];
+        const fileName = `posts/${Date.now()}_${i}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const storageRef = storage.ref().child(fileName);
+        
+        console.log(`Uploading image ${i + 1}/${selectedImages.length}: ${fileName}`);
+        
+        try {
+          const snapshot = await storageRef.put(file);
+          const downloadURL = await snapshot.ref.getDownloadURL();
+          imageUrls.push(downloadURL);
+          console.log(`Successfully uploaded: ${downloadURL}`);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          console.error('Error details:', error.code, error.message);
+          
+          // If Firebase Storage fails, we'll continue without images
+          showMessage(`Warning: Could not upload image ${file.name}. Posting without images.`, 'error');
+          break; // Stop trying to upload more images
+        }
+      }
+      
+      console.log('Upload complete. URLs:', imageUrls);
+      return imageUrls;
+    }
+
+    // Initialize image upload on page load
+    setupImageUpload();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById("title").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const vendor = document.getElementById("vendor").value;
+      const city = document.getElementById("city").value;
+
+      if (!title || !price || !description || !vendor || !city) {
+        showMessage("All fields are required.", 'error');
+        return;
+      }
+
+      // Disable submit button
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Uploading...";
+
+      try {
+        let imageUrls = [];
+        
+        // Upload images if any are selected
+        if (selectedImages.length > 0) {
+          submitBtn.textContent = "Uploading images...";
+          try {
+            imageUrls = await uploadImages();
+          } catch (error) {
+            console.error('Image upload failed:', error);
+            showMessage('Image upload failed, posting without images...', 'error');
+            // Continue without images
+          }
+        }
+        
+        submitBtn.textContent = "Saving post...";
+        
+        // Save post to Firestore
+        await db.collection("posts").add({
+          title,
+          price,
+          description,
+          vendor,
+          city,
+          images: imageUrls,
+          created: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showMessage("Pack posted successfully! 🎉");
+        form.reset();
+        selectedImages = [];
+        imagePreviewContainer.innerHTML = '';
+        
+        // Redirect to map after 2 seconds
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+        
+      } catch (err) {
+        console.error("Error submitting post:", err);
+        showMessage("Error posting pack. Please try again.", 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "📦 Post Pack";
+      }
+    });
+  </script>
 </body>
 </html>

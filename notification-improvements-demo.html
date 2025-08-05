@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notification & Header Improvements - PacksList</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #f5f7fa;
+    }
+    
+    .demo-container {
+      padding: 0;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .section-title {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .section-content {
+      padding: 30px;
+    }
+    
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .before, .after {
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+    }
+    
+    .before {
+      background: #fff5f5;
+      border-color: #f1c0c7;
+    }
+    
+    .after {
+      background: #f0fff4;
+      border-color: #c3e6cb;
+    }
+    
+    .demo-buttons {
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .demo-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      margin: 0 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .demo-btn:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+    
+    .demo-btn.warning {
+      background: #ffc107;
+      color: #333;
+    }
+    
+    .demo-btn.warning:hover {
+      background: #e0a800;
+    }
+    
+    .old-toast {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-left: 4px solid #4CAF50;
+      font-size: 14px;
+      margin: 10px 0;
+      position: relative;
+    }
+    
+    .old-toast::after {
+      content: "Disappears after 5 seconds";
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      font-size: 11px;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    .features-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .features-list li {
+      padding: 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .features-list li::before {
+      content: "✅";
+      font-size: 16px;
+    }
+    
+    .old-features-list li::before {
+      content: "❌";
+    }
+    
+    .header-demo {
+      margin: 20px 0;
+      border: 2px dashed #dee2e6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-container">
+    
+    <!-- Clean Header Demo -->
+    <div class="section">
+      <h2 class="section-title">🧹 Cleaned Up Header</h2>
+      <div class="section-content">
+        <div class="header-demo" id="clean-header-demo">
+          <!-- Clean header will be rendered here -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #6c757d;">
+          <p><strong>Much cleaner!</strong> Just the logo, brand name, and location - no clutter.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Improvements -->
+    <div class="section">
+      <h2 class="section-title">🔔 Notification Improvements</h2>
+      <div class="section-content">
+        
+        <div class="comparison">
+          <div class="before">
+            <h4 style="margin-top: 0; color: #dc3545;">❌ Before</h4>
+            <div class="old-toast">
+              🎉 Your pack "Purple Gelato" has been approved and is now live!
+            </div>
+            <ul class="features-list old-features-list" style="margin-top: 30px;">
+              <li>Stayed for 5 seconds (too long)</li>
+              <li>No way to dismiss early</li>
+              <li>Had to wait for auto-close</li>
+            </ul>
+          </div>
+          
+          <div class="after">
+            <h4 style="margin-top: 0; color: #28a745;">✅ After</h4>
+            <div id="demo-toast-container" style="position: relative;">
+              <!-- Demo toasts will appear here -->
+            </div>
+            <ul class="features-list" style="margin-top: 20px;">
+              <li>Disappears after 2 seconds (perfect timing)</li>
+              <li>Has ✕ button to close instantly</li>
+              <li>Better layout with proper spacing</li>
+              <li>Hover effects on close button</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="demo-buttons">
+          <button class="demo-btn" onclick="showDemoToast('🎉 Pack approved and live!', 'success')">
+            Test Success Toast
+          </button>
+          <button class="demo-btn warning" onclick="showDemoToast('⚠️ Pack needs review', 'warning')">
+            Test Warning Toast
+          </button>
+          <button class="demo-btn" onclick="showDemoToast('📦 New pack submitted', 'info')" style="background: #17a2b8;">
+            Test Info Toast
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="section">
+      <h2 class="section-title">✨ Summary of Improvements</h2>
+      <div class="section-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+          
+          <div style="text-align: center; padding: 20px; border: 2px solid #e9ecef; border-radius: 8px;">
+            <div style="font-size: 2.5em; margin-bottom: 15px;">⚡</div>
+            <h4>Faster Notifications</h4>
+            <p style="color: #6c757d; font-size: 14px;">Reduced from 5 seconds to 2 seconds for better UX</p>
+          </div>
+          
+          <div style="text-align: center; padding: 20px; border: 2px solid #e9ecef; border-radius: 8px;">
+            <div style="font-size: 2.5em; margin-bottom: 15px;">✕</div>
+            <h4>Manual Close</h4>
+            <p style="color: #6c757d; font-size: 14px;">Added close button so users can dismiss immediately</p>
+          </div>
+          
+          <div style="text-align: center; padding: 20px; border: 2px solid #e9ecef; border-radius: 8px;">
+            <div style="font-size: 2.5em; margin-bottom: 15px;">🧹</div>
+            <h4>Clean Header</h4>
+            <p style="color: #6c757d; font-size: 14px;">Removed clutter - just logo, brand, and location</p>
+          </div>
+          
+          <div style="text-align: center; padding: 20px; border: 2px solid #e9ecef; border-radius: 8px;">
+            <div style="font-size: 2.5em; margin-bottom: 15px;">🎨</div>
+            <h4>Better Design</h4>
+            <p style="color: #6c757d; font-size: 14px;">Improved toast layout and styling</p>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="notifications/notification-manager.js"></script>
+  <script src="header-manager.js"></script>
+  
+  <script>
+    // Create demo toast system
+    function showDemoToast(message, type = 'success') {
+      const container = document.getElementById('demo-toast-container');
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.style.position = 'relative';
+      toast.style.marginBottom = '12px';
+      toast.style.background = 'white';
+      toast.style.borderRadius = '8px';
+      toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      toast.style.animation = 'none';
+      
+      const borderColors = {
+        success: '#4CAF50',
+        warning: '#ffc107',
+        info: '#17a2b8',
+        error: '#e74c3c'
+      };
+      
+      toast.style.borderLeft = `4px solid ${borderColors[type]}`;
+      
+      toast.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px; gap: 12px;">
+          <div style="flex: 1; font-size: 14px; line-height: 1.4; color: #333;">${message}</div>
+          <button onclick="this.parentElement.parentElement.remove()" style="
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+          " onmouseover="this.style.background='rgba(0,0,0,0.1)'; this.style.color='#333';" onmouseout="this.style.background='none'; this.style.color='#6c757d';">✕</button>
+        </div>
+      `;
+      
+      container.appendChild(toast);
+      
+      // Auto-remove after 2 seconds
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.remove();
+        }
+      }, 2000);
+    }
+    
+    // Initialize clean header demo
+    window.addEventListener('load', () => {
+      const headerDemo = document.getElementById('clean-header-demo');
+      
+      // Create clean header
+      headerDemo.innerHTML = `
+        <div class="header" style="margin: 0; position: relative;">
+          <div class="header-content">
+            <div class="logo" onclick="alert('🏠 Would go to home!')" title="Go to PacksList Home">
+              <div class="logo-icon">🌿</div>
+              <span class="logo-text">PacksList</span>
+              <span class="location-indicator">Providence, RI</span>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      console.log('✅ Notification improvements demo ready');
+    });
+  </script>
+</body>
+</html>

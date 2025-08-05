@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Quick Setup Guide</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+    .step { background: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #4CAF50; }
+    .warning { background: #fff3cd; border-left-color: #ffc107; }
+    .error { background: #f8d7da; border-left-color: #dc3545; }
+    .code { background: #f1f3f4; padding: 10px; border-radius: 4px; font-family: monospace; margin: 10px 0; }
+    .button { display: inline-block; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin: 5px; }
+    h1 { color: #2c3e50; }
+    h2 { color: #4CAF50; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+    ol { counter-reset: step-counter; }
+    ol li { margin: 15px 0; position: relative; padding-left: 30px; }
+    ol li::before { counter-increment: step-counter; content: counter(step-counter); position: absolute; left: 0; top: 0; background: #4CAF50; color: white; width: 20px; height: 20px; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🚀 Firebase Quick Setup Guide</h1>
+  
+  <div class="error">
+    <h3>⚠️ Current Issue</h3>
+    <p>Configuration setup failed because Firebase security rules are blocking access. Follow these steps to fix it:</p>
+  </div>
+
+  <h2>Step 1: Temporarily Update Security Rules</h2>
+  <div class="step">
+    <ol>
+      <li>Open <a href="https://console.firebase.google.com/project/cw55hf8nvt/firestore/rules" target="_blank" class="button">Firebase Console - Rules</a></li>
+      <li>Copy the temporary rules below:</li>
+    </ol>
+    <div class="code">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}</div>
+    <ol start="3">
+      <li>Paste the rules in Firebase Console</li>
+      <li>Click <strong>"Publish"</strong></li>
+    </ol>
+  </div>
+
+  <h2>Step 2: Setup Configuration Data</h2>
+  <div class="step">
+    <ol>
+      <li>Open <a href="setup-configs.html" target="_blank" class="button">Setup Configs Page</a></li>
+      <li>Click <strong>"Setup All Configurations"</strong></li>
+      <li>Verify all configurations are created successfully</li>
+    </ol>
+  </div>
+
+  <h2>Step 3: Apply Secure Rules</h2>
+  <div class="step warning">
+    <p><strong>🔒 IMPORTANT:</strong> After config setup is complete, immediately replace with secure rules:</p>
+    <ol>
+      <li>Go back to <a href="https://console.firebase.google.com/project/cw55hf8nvt/firestore/rules" target="_blank" class="button">Firebase Console - Rules</a></li>
+      <li>Copy the secure rules from <code>firebase-security-rules.txt</code></li>
+      <li>Replace the temporary rules and click <strong>"Publish"</strong></li>
+    </ol>
+  </div>
+
+  <h2>Step 4: Create Required Index</h2>
+  <div class="step">
+    <ol>
+      <li>Click this direct link: <a href="https://console.firebase.google.com/v1/r/project/cw55hf8nvt/firestore/indexes?create_composite=Ckhwcm9qZWN0cy9jdzU1aGY4bnZ0L2RhdGFiYXNlcy8oZGVmYXVsdCkvY29sbGVjdGlvbkdyb3Vwcy9wb3N0cy9pbmRleGVzL18QARoKCgZ1c2VySWQQARoLCgdjcmVhdGVkEAIaDAoIX19uYW1lX18QAg" target="_blank" class="button">Create Posts Index</a></li>
+      <li>Click <strong>"Create"</strong> to create the index</li>
+    </ol>
+  </div>
+
+  <h2>Step 5: Add Localhost to Authorized Domains</h2>
+  <div class="step">
+    <ol>
+      <li>Open <a href="https://console.firebase.google.com/project/cw55hf8nvt/authentication/settings" target="_blank" class="button">Firebase Console - Auth Settings</a></li>
+      <li>Scroll to <strong>"Authorized domains"</strong></li>
+      <li>Click <strong>"Add domain"</strong></li>
+      <li>Add: <code>localhost</code></li>
+      <li>Add: <code>127.0.0.1</code></li>
+    </ol>
+  </div>
+
+  <h2>✅ Test Your Setup</h2>
+  <div class="step">
+    <p>After completing all steps:</p>
+    <ol>
+      <li>Refresh your PacksList application</li>
+      <li>Try signing up for an account</li>
+      <li>Check that no permission errors appear in console</li>
+    </ol>
+  </div>
+
+  <div class="warning">
+    <h3>🔐 Security Reminder</h3>
+    <p>The temporary rules in Step 1 make your database publicly accessible. <strong>Do not forget Step 3</strong> - applying the secure rules after setup is complete!</p>
+  </div>
+
+  <hr style="margin: 40px 0;">
+  
+  <h2>📋 Quick Checklist</h2>
+  <div class="step">
+    <p>Check off each step as you complete it:</p>
+    <ul>
+      <li>☐ Applied temporary Firebase rules</li>
+      <li>☐ Ran configuration setup successfully</li>
+      <li>☐ Applied secure Firebase rules</li>
+      <li>☐ Created required database index</li>
+      <li>☐ Added localhost to authorized domains</li>
+      <li>☐ Tested application signup/signin</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retry Failed Configs - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+    #log { background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Retry Failed Configuration Setup</h1>
+  <p>This will retry creating the configs that failed: <strong>metro-areas</strong> and <strong>region-settings</strong></p>
+  
+  <div id="status" class="status warning">
+    <strong>Status:</strong> <span id="status-text">Ready to retry failed configs</span>
+  </div>
+  
+  <button onclick="retryFailedConfigs()">Retry Failed Configs</button>
+  <button onclick="checkAllConfigs()">Check All Config Status</button>
+  <button onclick="clearLog()">Clear Log</button>
+  
+  <h3>Log:</h3>
+  <div id="log"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'black';
+      logEl.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    function updateStatus(text, type = 'info') {
+      const statusEl = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      statusText.textContent = text;
+      statusEl.className = `status ${type}`;
+    }
+    
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+
+    // Only the failed configs
+    const failedConfigs = {
+      'metro-areas': {
+        areas: [
+          {
+            name: 'San Francisco Bay Area',
+            bounds: { north: 38.5, south: 36.5, east: -121.0, west: -123.5 },
+            cities: ['San Francisco', 'Oakland', 'San Jose', 'Berkeley']
+          },
+          {
+            name: 'Los Angeles Metro',
+            bounds: { north: 34.8, south: 33.5, east: -117.5, west: -119.0 },
+            cities: ['Los Angeles', 'Long Beach', 'Anaheim', 'Santa Monica']
+          }
+        ],
+        lastUpdated: new Date().toISOString()
+      },
+      'region-settings': {
+        defaultRegion: 'sf-bay-area',
+        supportedRegions: ['sf-bay-area', 'la-metro', 'ny-metro'],
+        maxSearchRadius: 50,
+        defaultSearchRadius: 10,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+
+    async function retryFailedConfigs() {
+      updateStatus('Retrying failed configurations...', 'warning');
+      log('Starting retry for failed configs...');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        updateStatus('Error: Firebase not ready', 'error');
+        return;
+      }
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const [configType, configData] of Object.entries(failedConfigs)) {
+        try {
+          log(`Retrying config: ${configType}...`);
+          
+          // Try to set with merge option
+          await window.db.collection('config').doc(configType).set(configData, { merge: false });
+          log(`✅ Config '${configType}' created successfully`, 'success');
+          successCount++;
+          
+          // Wait a bit between operations
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+        } catch (error) {
+          log(`❌ Failed to create config '${configType}': ${error.message}`, 'error');
+          
+          // Try alternative approach - update instead of set
+          try {
+            log(`Trying update method for ${configType}...`);
+            await window.db.collection('config').doc(configType).update(configData);
+            log(`✅ Config '${configType}' updated successfully`, 'success');
+            successCount++;
+          } catch (updateError) {
+            log(`❌ Update also failed for '${configType}': ${updateError.message}`, 'error');
+            errorCount++;
+          }
+        }
+      }
+
+      if (errorCount === 0) {
+        updateStatus(`All failed configurations fixed! (${successCount} items)`, 'success');
+        log(`🎉 Retry complete! Fixed ${successCount} configuration documents.`, 'success');
+      } else {
+        updateStatus(`Retry completed with some errors (${successCount} success, ${errorCount} errors)`, 'error');
+      }
+    }
+
+    async function checkAllConfigs() {
+      log('Checking all configuration status...');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        return;
+      }
+
+      const allConfigTypes = ['cities', 'product-types', 'vendor-categories', 'metro-areas', 'ui-strings', 'region-settings'];
+      let existsCount = 0;
+
+      for (const configType of allConfigTypes) {
+        try {
+          const doc = await window.db.collection('config').doc(configType).get();
+          if (doc.exists) {
+            log(`✅ Config exists: ${configType}`, 'success');
+            existsCount++;
+          } else {
+            log(`❌ Config missing: ${configType}`, 'error');
+          }
+        } catch (error) {
+          log(`❌ Cannot check config ${configType}: ${error.message}`, 'error');
+        }
+      }
+      
+      log(`📊 Summary: ${existsCount}/${allConfigTypes.length} configs exist`);
+      
+      if (existsCount === allConfigTypes.length) {
+        updateStatus('All configurations present!', 'success');
+      } else {
+        updateStatus(`Missing ${allConfigTypes.length - existsCount} configurations`, 'warning');
+      }
+    }
+
+    // Wait for Firebase to initialize
+    setTimeout(() => {
+      if (window.db) {
+        log('✅ Firebase initialized and ready');
+        updateStatus('Ready to retry failed configs', 'success');
+      } else {
+        log('❌ Firebase not ready after timeout', 'error');
+        updateStatus('Error - Firebase not ready', 'error');
+      }
+    }, 2000);
+  </script>
+</body>
+</html>
