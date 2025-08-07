@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Header Template - PacksList</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Dynamic Header will be injected here by header-manager.js -->
+    <!-- No need to manually code the header anymore! -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div style="padding: 40px; text-align: center;">
+        <h1>🎉 Dynamic Header Template</h1>
+        <p>This page demonstrates the new dynamic header system!</p>
+        
+        <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+          <h3>✨ Features:</h3>
+          <ul>
+            <li><strong>Automatic Header Generation:</strong> No more copying header HTML between files</li>
+            <li><strong>Centralized Configuration:</strong> Change header elements in one place</li>
+            <li><strong>Dynamic Updates:</strong> Location and auth status update automatically</li>
+            <li><strong>Context Aware:</strong> Different headers for admin vs main app</li>
+            <li><strong>Auth Integration:</strong> Seamlessly integrates with your auth system</li>
+            <li><strong>Navigation Integration:</strong> Works with existing NavigationManager</li>
+          </ul>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: left;">
+          <h3>🔧 How to Use:</h3>
+          <ol>
+            <li><strong>Remove old header HTML</strong> from your existing pages</li>
+            <li><strong>Include the header-manager.js script</strong> in your pages</li>
+            <li><strong>Header automatically renders</strong> when page loads</li>
+            <li><strong>Customize via JavaScript</strong> if needed</li>
+          </ol>
+          
+          <pre style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 6px; overflow-x: auto; margin-top: 15px;"><code>&lt;!-- Include the header manager --&gt;
+&lt;script src="navigation-manager.js"&gt;&lt;/script&gt;
+&lt;script src="header-manager.js"&gt;&lt;/script&gt;
+
+&lt;!-- Optional: Customize header --&gt;
+&lt;script&gt;
+  // Update brand name
+  window.headerManager.updateConfig({
+    brand: { name: 'MyApp' }
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+          <div style="background: white; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px;">
+            <h4>🏠 Main App Header</h4>
+            <p>Includes logo, location indicator, auth buttons, and navigation</p>
+          </div>
+          
+          <div style="background: white; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px;">
+            <h4>👑 Admin Header</h4>
+            <p>Specialized admin layout with admin badge and back to site button</p>
+          </div>
+          
+          <div style="background: white; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px;">
+            <h4>📱 Responsive</h4>
+            <p>Automatically adapts to mobile and desktop layouts</p>
+          </div>
+          
+          <div style="background: white; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px;">
+            <h4>🔄 Real-time</h4>
+            <p>Location and auth status update without page refresh</p>
+          </div>
+        </div>
+
+        <button onclick="testHeaderCustomization()" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 10px;">
+          🎨 Test Header Customization
+        </button>
+        
+        <button onclick="testLocationUpdate()" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; cursor: pointer; margin: 10px;">
+          📍 Test Location Update
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Toolbar (still handled by navigation-manager.js) -->
+    <div class="bottom-toolbar">
+      <nav class="toolbar-nav">
+        <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+      </nav>
+    </div>
+  </div>
+
+  <!-- Scripts - Order is important! -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="config-manager.js"></script>
+  <script src="cache-manager.js"></script>
+  <script src="content-manager.js"></script>
+  <script src="navigation-manager.js"></script>
+  <script src="page-manager.js"></script>
+  <script src="vendor-manager.js"></script>
+  <script src="dynamic-location-manager.js"></script>
+  <script src="location-utils.js"></script>
+  <script src="search-utils.js"></script>
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+  <script src="auth/auth-modals.js"></script>
+  <script src="auth/onboarding-manager.js"></script>
+  <script src="notifications/notification-manager.js"></script>
+  <script src="header-manager.js"></script>
+  
+  <script>
+    // Test functions for demonstrating dynamic header capabilities
+    function testHeaderCustomization() {
+      if (window.headerManager) {
+        // Change brand name and icon
+        window.headerManager.updateConfig({
+          brand: {
+            icon: '🚀',
+            name: 'SuperList'
+          }
+        });
+        
+        alert('🎨 Header customized! The brand icon and name have been changed.');
+      }
+    }
+    
+    function testLocationUpdate() {
+      if (window.headerManager) {
+        // Simulate location update
+        window.headerManager.updateLocationDisplay('Boston, MA');
+        
+        setTimeout(() => {
+          window.headerManager.updateLocationDisplay('New York, NY');
+        }, 2000);
+        
+        setTimeout(() => {
+          window.headerManager.updateLocationDisplay(); // Reset to default
+        }, 4000);
+        
+        alert('📍 Location updates demo started! Watch the header location indicator.');
+      }
+    }
+    
+    // Log when header manager is ready
+    window.addEventListener('load', () => {
+      console.log('✅ Dynamic Header Template Loaded');
+      console.log('Header Manager:', window.headerManager);
+      console.log('Available methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.headerManager)));
+    });
+  </script>
+</body>
+</html>

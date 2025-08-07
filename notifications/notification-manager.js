@@ -8,7 +8,11 @@ class NotificationManager {
     this.isInitialized = false;
     this.unreadCount = 0;
     this.maxNotifications = 100;
+<<<<<<< HEAD
     this.notificationTimeout = 5000; // 5 seconds
+=======
+    this.notificationTimeout = 1000; // 1 second
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     
     // Notification types
     this.types = {
@@ -185,8 +189,13 @@ class NotificationManager {
         return; // Don't notify for other status changes
     }
     
+<<<<<<< HEAD
     // Show toast notification
     this.showToast(message, status === 'approved' ? 'success' : 'warning');
+=======
+    // Toast notifications disabled
+    // this.showToast(message, status === 'approved' ? 'success' : 'warning');
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     
     // Create persistent notification
     this.createNotification({
@@ -216,10 +225,17 @@ class NotificationManager {
     this.updateNotificationCount();
     this.updateNotificationUI();
     
+<<<<<<< HEAD
     // Show toast for new notifications
     if (!notification.read) {
       this.showToast(notification.message, this.getToastType(notification.type));
     }
+=======
+    // Toast notifications disabled
+    // if (!notification.read) {
+    //   this.showToast(notification.message, this.getToastType(notification.type));
+    // }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Create and store new notification
@@ -321,7 +337,11 @@ class NotificationManager {
       const panel = document.createElement('div');
       panel.id = 'notification-panel';
       panel.className = 'notification-panel';
+<<<<<<< HEAD
       panel.innerHTML = `
+=======
+      const panelHTML = `
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         <div class="notification-header">
           <h3>Notifications</h3>
           <div class="notification-actions">
@@ -333,6 +353,15 @@ class NotificationManager {
           <div class="no-notifications">No notifications yet</div>
         </div>
       `;
+<<<<<<< HEAD
+=======
+      
+      if (window.domUtils) {
+        window.domUtils.setHTML(panel, panelHTML);
+      } else {
+        panel.innerHTML = panelHTML;
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       document.body.appendChild(panel);
     }
     
@@ -517,12 +546,58 @@ class NotificationManager {
       .toast {
         background: white;
         border-radius: 8px;
+<<<<<<< HEAD
         padding: 16px;
+=======
+        padding: 0;
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         margin-bottom: 12px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         border-left: 4px solid #4CAF50;
         animation: toastSlideIn 0.3s ease-out;
+<<<<<<< HEAD
         cursor: pointer;
+=======
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .toast-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        gap: 12px;
+      }
+      
+      .toast-message {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.4;
+        color: #333;
+      }
+      
+      .toast-close {
+        background: none;
+        border: none;
+        font-size: 16px;
+        color: #6c757d;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+      
+      .toast-close:hover {
+        background: rgba(0,0,0,0.1);
+        color: #333;
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       }
       
       .toast.warning {
@@ -601,7 +676,16 @@ class NotificationManager {
     if (!listElement) return;
     
     if (this.notifications.length === 0) {
+<<<<<<< HEAD
       listElement.innerHTML = '<div class="no-notifications">No notifications yet</div>';
+=======
+      const noNotificationsHTML = '<div class="no-notifications">No notifications yet</div>';
+      if (window.domUtils) {
+        window.domUtils.setHTML(listElement, noNotificationsHTML);
+      } else {
+        listElement.innerHTML = noNotificationsHTML;
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       return;
     }
     
@@ -617,7 +701,15 @@ class NotificationManager {
       </div>
     `).join('');
     
+<<<<<<< HEAD
     listElement.innerHTML = notificationsHtml;
+=======
+    if (window.domUtils) {
+      window.domUtils.setHTML(listElement, notificationsHtml);
+    } else {
+      listElement.innerHTML = notificationsHtml;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Handle notification click
@@ -644,6 +736,7 @@ class NotificationManager {
     
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
+<<<<<<< HEAD
     toast.textContent = message;
     
     // Auto-remove after timeout
@@ -652,10 +745,33 @@ class NotificationManager {
     toastContainer.appendChild(toast);
     
     setTimeout(() => {
+=======
+    
+    // Create toast content with close button
+    toast.innerHTML = `
+      <div class="toast-content">
+        <div class="toast-message">${message}</div>
+        <button class="toast-close" onclick="this.parentElement.parentElement.remove()">✕</button>
+      </div>
+    `;
+    
+    // Auto-remove after timeout
+    const autoRemove = setTimeout(() => {
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       if (toast.parentNode) {
         toast.remove();
       }
     }, this.notificationTimeout);
+<<<<<<< HEAD
+=======
+    
+    // Clear timeout if manually closed
+    toast.addEventListener('remove', () => {
+      clearTimeout(autoRemove);
+    });
+    
+    toastContainer.appendChild(toast);
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Get toast type from notification type

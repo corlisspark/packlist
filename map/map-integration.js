@@ -29,14 +29,22 @@ class MapIntegration {
   // Initialize map integration
   async initialize(mapInstance) {
     if (!mapInstance) {
+<<<<<<< HEAD
       console.error('Map instance required for map integration');
+=======
+      // Map instance required for map integration
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       return false;
     }
     
     this.map = mapInstance;
     this.isAdminMode = window.authManager?.isAdminUser || false;
     
+<<<<<<< HEAD
     console.log('Initializing map integration...', { isAdminMode: this.isAdminMode });
+=======
+    // Initializing map integration
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     
     // Set up real-time listeners
     this.setupRealTimeListeners();
@@ -265,6 +273,7 @@ class MapIntegration {
         zIndex: status === 'pending' ? 1000 : 100
       });
       
+<<<<<<< HEAD
       // Add click listener
       marker.addListener('click', () => {
         if (status === 'pending' && this.isAdminMode) {
@@ -274,6 +283,29 @@ class MapIntegration {
         }
       });
       
+=======
+      // Add enhanced click listener with animation and hover effects
+      marker.addListener('click', () => {
+        // Add click animation
+        this.animateMarkerClick(marker);
+        
+        if (status === 'pending' && this.isAdminMode) {
+          this.showAdminPackPreview(pack);
+        } else {
+          this.showEnhancedPackModal(pack, marker);
+        }
+      });
+      
+      // Add hover effects for better UX
+      marker.addListener('mouseover', () => {
+        this.highlightMarker(marker, true);
+      });
+      
+      marker.addListener('mouseout', () => {
+        this.highlightMarker(marker, false);
+      });
+      
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       // Store pack data with marker
       marker.packData = pack;
       marker.packStatus = status;
@@ -711,6 +743,222 @@ class MapIntegration {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Enhanced pack modal with better integration
+  showEnhancedPackModal(pack, marker) {
+    // Center map on selected marker
+    if (this.map && marker) {
+      this.map.panTo(marker.getPosition());
+      this.map.setZoom(Math.max(this.map.getZoom(), 14));
+    }
+    
+    // Call existing modal function with enhancements
+    if (window.showVendorModal) {
+      window.showVendorModal(pack);
+      
+      // Track modal interaction
+      this.trackPackInteraction(pack, 'modal_opened');
+    } else {
+      // Fallback to basic modal creation
+      this.createBasicPackModal(pack);
+    }
+  }
+
+  // Create basic pack modal if main modal system not available
+  createBasicPackModal(pack) {
+    let modal = document.getElementById('pack-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'pack-modal';
+      modal.className = 'pack-modal';
+      modal.innerHTML = `
+        <div class="modal-overlay" onclick="this.parentElement.style.display='none'"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="pack-modal-title"></h2>
+            <button class="modal-close" onclick="this.closest('.pack-modal').style.display='none'">✕</button>
+          </div>
+          <div class="modal-body" id="pack-modal-body"></div>
+        </div>
+      `;
+      
+      // Add modal styles
+      const style = document.createElement('style');
+      style.textContent = `
+        .pack-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 10000;
+          display: none;
+          justify-content: center;
+          align-items: center;
+        }
+        .pack-modal[style*="block"] {
+          display: flex !important;
+        }
+        .pack-modal .modal-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+        }
+        .pack-modal .modal-content {
+          background: white;
+          border-radius: 12px;
+          max-width: 500px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .pack-modal .modal-header {
+          padding: 20px 20px 10px;
+          border-bottom: 1px solid #eee;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .pack-modal .modal-body {
+          padding: 20px;
+        }
+        .pack-modal .modal-close {
+          background: none;
+          border: none;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 0;
+          color: #666;
+        }
+      `;
+      
+      if (!document.querySelector('#pack-modal-styles')) {
+        style.id = 'pack-modal-styles';
+        document.head.appendChild(style);
+      }
+      
+      document.body.appendChild(modal);
+    }
+    
+    // Update modal content
+    document.getElementById('pack-modal-title').textContent = pack.title;
+    document.getElementById('pack-modal-body').innerHTML = `
+      <div class="pack-details">
+        <div class="pack-price" style="font-size: 24px; font-weight: bold; color: #2c5aa0; margin-bottom: 15px;">
+          $${pack.price}
+        </div>
+        <div class="pack-vendor" style="margin-bottom: 10px;">
+          <strong>Vendor:</strong> ${pack.vendor}
+        </div>
+        <div class="pack-location" style="margin-bottom: 10px;">
+          <strong>Location:</strong> ${this.formatLocation(pack.city)}
+        </div>
+        ${pack.description ? `
+          <div class="pack-description" style="margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+            ${pack.description}
+          </div>
+        ` : ''}
+        <div class="pack-actions" style="margin-top: 20px; display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="alert('Contact feature coming soon!')" style="flex: 1; padding: 12px; background: #2c5aa0; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            💬 Contact Vendor
+          </button>
+          <button class="btn btn-outline" onclick="this.closest('.pack-modal').style.display='none'" style="padding: 12px 20px; background: transparent; border: 2px solid #ddd; border-radius: 6px; cursor: pointer;">
+            Close
+          </button>
+        </div>
+      </div>
+    `;
+    
+    modal.style.display = 'block';
+  }
+
+  // Animate marker click for visual feedback
+  animateMarkerClick(marker) {
+    if (!marker) return;
+    
+    // Store original icon
+    const originalIcon = marker.getIcon();
+    
+    // Create enlarged version for animation
+    const enlargedIcon = {
+      ...originalIcon,
+      scaledSize: new google.maps.Size(40, 40),
+      anchor: new google.maps.Point(20, 20)
+    };
+    
+    // Apply enlarged icon
+    marker.setIcon(enlargedIcon);
+    
+    // Reset after animation
+    setTimeout(() => {
+      marker.setIcon(originalIcon);
+    }, 200);
+  }
+
+  // Highlight marker on hover
+  highlightMarker(marker, highlight) {
+    if (!marker) return;
+    
+    const originalIcon = marker.getIcon();
+    if (!originalIcon) return;
+    
+    if (highlight) {
+      // Store original if not already stored
+      if (!marker.originalIcon) {
+        marker.originalIcon = originalIcon;
+      }
+      
+      // Create highlighted version
+      const highlightedIcon = {
+        ...originalIcon,
+        scaledSize: new google.maps.Size(36, 36),
+        anchor: new google.maps.Point(18, 18)
+      };
+      
+      marker.setIcon(highlightedIcon);
+      marker.setZIndex(1000);
+    } else {
+      // Restore original
+      if (marker.originalIcon) {
+        marker.setIcon(marker.originalIcon);
+        marker.setZIndex(marker.packStatus === 'pending' ? 1000 : 100);
+      }
+    }
+  }
+
+  // Track pack interactions for analytics
+  trackPackInteraction(pack, action) {
+    try {
+      // Log interaction
+      console.log(`Pack interaction: ${action} on ${pack.title} (${pack.id})`);
+      
+      // Could integrate with analytics service here
+      if (window.gtag) {
+        window.gtag('event', 'pack_interaction', {
+          'event_category': 'map',
+          'event_label': pack.title,
+          'pack_id': pack.id,
+          'action': action
+        });
+      }
+      
+      // Fire custom event for other components
+      window.dispatchEvent(new CustomEvent('packInteraction', {
+        detail: { pack, action, timestamp: Date.now() }
+      }));
+      
+    } catch (error) {
+      console.warn('Error tracking pack interaction:', error);
+    }
+  }
+
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   showPackApprovedNotification(pack) {
     if (window.authManager) {
       window.authManager.showAuthSuccess(`New pack approved: ${pack.title}`);

@@ -28,7 +28,11 @@ class AuthManager {
           this.auth = firebase.auth();
           this.db = firebase.firestore();
           
+<<<<<<< HEAD
           console.log('AuthManager: Firebase initialized successfully');
+=======
+          // Firebase initialized successfully
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
           
           // Auth state change listener
           this.auth.onAuthStateChanged((user) => {
@@ -36,19 +40,33 @@ class AuthManager {
           });
           
           this.isInitialized = true;
+<<<<<<< HEAD
           console.log('AuthManager: Initialization complete');
           
         } catch (error) {
           console.error('AuthManager: Error initializing Firebase services:', error);
+=======
+          // AuthManager initialization complete
+          
+        } catch (error) {
+          // AuthManager: Error initializing Firebase services
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
           if (attempts < maxAttempts) {
             setTimeout(checkFirebase, 100);
           }
         }
       } else if (attempts < maxAttempts) {
+<<<<<<< HEAD
         console.log('AuthManager: Waiting for Firebase...', attempts);
         setTimeout(checkFirebase, 100);
       } else {
         console.error('AuthManager: Firebase initialization timeout');
+=======
+        // AuthManager: Waiting for Firebase
+        setTimeout(checkFirebase, 100);
+      } else {
+        // AuthManager: Firebase initialization timeout
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       }
     };
     
@@ -88,7 +106,11 @@ class AuthManager {
       
       return this.userProfile;
     } catch (error) {
+<<<<<<< HEAD
       console.error('Error loading user profile:', error);
+=======
+      // Error loading user profile
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       return null;
     }
   }
@@ -125,7 +147,11 @@ class AuthManager {
       await this.db.collection('users').doc(this.user.uid).set(profile);
       return profile;
     } catch (error) {
+<<<<<<< HEAD
       console.error('Error creating user profile:', error);
+=======
+      // Error creating user profile
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       return null;
     }
   }
@@ -253,7 +279,11 @@ class AuthManager {
       this.notifyAuthListeners('onboardingCompleted');
       
     } catch (error) {
+<<<<<<< HEAD
       console.error('Error completing onboarding:', error);
+=======
+      // Error completing onboarding
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     }
   }
 
@@ -295,7 +325,11 @@ class AuthManager {
       this.notifyAuthListeners('profileUpdated', this.userProfile);
       return { success: true };
     } catch (error) {
+<<<<<<< HEAD
       console.error('Error updating profile:', error);
+=======
+      // Error updating profile
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       return { success: false, error };
     }
   }
@@ -334,6 +368,7 @@ class AuthManager {
 
   // Require admin access
   requireAdmin() {
+<<<<<<< HEAD
     console.log('🔍 requireAdmin() called - debugging each step...');
     
     // Check basic authentication first
@@ -353,6 +388,27 @@ class AuthManager {
     
     // Email verification removed - check admin status directly
     console.log('✅ requireAdmin: Email verification removed - checking admin status directly');
+=======
+    // RequireAdmin called - checking admin status
+    
+    // Check basic authentication first
+    if (!this.user) {
+      // RequireAdmin: No user found
+      this.showSignInModal();
+      return false;
+    }
+    // RequireAdmin: User exists
+    
+    // Check if profile exists
+    if (!this.userProfile) {
+      // RequireAdmin: No user profile found
+      return false;
+    }
+    // RequireAdmin: User profile exists
+    
+    // Email verification removed - check admin status directly
+    // RequireAdmin: Checking admin status directly
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     console.log('  - isAdmin property:', this.isAdmin);
     console.log('  - userProfile.role:', this.userProfile.role);
     console.log('  - user email:', this.user.email);

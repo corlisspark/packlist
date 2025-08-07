@@ -162,7 +162,11 @@ class AdminManager {
 
   // Show access denied message
   showAccessDenied() {
+<<<<<<< HEAD
     document.body.innerHTML = `
+=======
+    const accessDeniedHTML = `
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       <div style="text-align: center; padding: 60px 20px; font-family: Inter, sans-serif;">
         <h1 style="color: #e74c3c; margin-bottom: 20px;">⛔ Access Denied</h1>
         <p style="color: #6c757d; margin-bottom: 30px;">You don't have permission to access the admin panel.</p>
@@ -171,6 +175,15 @@ class AdminManager {
         </a>
       </div>
     `;
+<<<<<<< HEAD
+=======
+    
+    if (window.domUtils) {
+      window.domUtils.setHTML(document.body, accessDeniedHTML);
+    } else {
+      document.body.innerHTML = accessDeniedHTML;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Set up event listeners
@@ -388,7 +401,15 @@ class AdminManager {
         </div>
       `).join('');
       
+<<<<<<< HEAD
       activityContainer.innerHTML = activityHTML;
+=======
+      if (window.domUtils) {
+        window.domUtils.setHTML(activityContainer, activityHTML);
+      } else {
+        activityContainer.innerHTML = activityHTML;
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
     } catch (error) {
       console.error('Error loading activity feed:', error);
@@ -403,7 +424,15 @@ class AdminManager {
       
       if (!container) return;
       
+<<<<<<< HEAD
       container.innerHTML = '<div class="loading">Loading packs...</div>';
+=======
+      if (window.domUtils) {
+        window.domUtils.setHTML(container, '<div class="loading">Loading packs...</div>');
+      } else {
+        container.innerHTML = '<div class="loading">Loading packs...</div>';
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
       let query = window.db.collection('posts');
       
@@ -414,11 +443,24 @@ class AdminManager {
       const snapshot = await query.orderBy('created', 'desc').limit(20).get();
       
       if (snapshot.empty) {
+<<<<<<< HEAD
         container.innerHTML = `
+=======
+        const noPacksHTML = `
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
           <div style="text-align: center; padding: 40px; color: #6c757d;">
             <p>No packs found for the selected filter.</p>
           </div>
         `;
+<<<<<<< HEAD
+=======
+        
+        if (window.domUtils) {
+          window.domUtils.setHTML(container, noPacksHTML);
+        } else {
+          container.innerHTML = noPacksHTML;
+        }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         return;
       }
       
@@ -428,7 +470,16 @@ class AdminManager {
         packsHTML.push(this.createPackReviewCard(pack));
       });
       
+<<<<<<< HEAD
       container.innerHTML = packsHTML.join('');
+=======
+      const allPacksHTML = packsHTML.join('');
+      if (window.domUtils) {
+        window.domUtils.setHTML(container, allPacksHTML);
+      } else {
+        container.innerHTML = allPacksHTML;
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
     } catch (error) {
       console.error('Error loading packs data:', error);
@@ -560,7 +611,15 @@ class AdminManager {
       const container = document.getElementById('users-table');
       if (!container) return;
       
+<<<<<<< HEAD
       container.innerHTML = '<div class="loading">Loading users...</div>';
+=======
+      if (window.domUtils) {
+        window.domUtils.setHTML(container, '<div class="loading">Loading users...</div>');
+      } else {
+        container.innerHTML = '<div class="loading">Loading users...</div>';
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
       const snapshot = await window.db
         .collection('users')
@@ -569,7 +628,16 @@ class AdminManager {
         .get();
       
       if (snapshot.empty) {
+<<<<<<< HEAD
         container.innerHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">No users found.</div>';
+=======
+        const noUsersHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">No users found.</div>';
+        if (window.domUtils) {
+          window.domUtils.setHTML(container, noUsersHTML);
+        } else {
+          container.innerHTML = noUsersHTML;
+        }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         return;
       }
       
@@ -580,7 +648,15 @@ class AdminManager {
         usersHTML += this.createUserRow(user);
       });
       
+<<<<<<< HEAD
       container.innerHTML = usersHTML;
+=======
+      if (window.domUtils) {
+        window.domUtils.setHTML(container, usersHTML);
+      } else {
+        container.innerHTML = usersHTML;
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
     } catch (error) {
       console.error('Error loading users:', error);
@@ -657,8 +733,60 @@ class AdminManager {
 
   // Load analytics data
   async loadAnalyticsData() {
+<<<<<<< HEAD
     // TODO: Implement analytics
     console.log('Loading analytics data...');
+=======
+    console.log('Loading analytics data...');
+    
+    // Initialize behavior analytics if not already done
+    if (window.behaviorAnalytics && !window.behaviorAnalytics.isInitialized) {
+      window.behaviorAnalytics.initialize();
+    }
+    
+    // Add sample data for demo purposes if no real data exists
+    this.addSampleAnalyticsData();
+  }
+
+  // Add sample analytics data for demonstration
+  addSampleAnalyticsData() {
+    if (!window.behaviorAnalytics) return;
+    
+    // Check if we already have data
+    const hasData = window.behaviorAnalytics.analytics.interactions.length > 0;
+    
+    if (!hasData) {
+      console.log('Adding sample analytics data...');
+      
+      // Generate sample interactions over the past week
+      const now = Date.now();
+      const oneDay = 24 * 60 * 60 * 1000;
+      
+      const sampleInteractions = [
+        { action: 'pin_clicked', vendor: { id: '1', title: 'Purple Gelato', city: 'providence' } },
+        { action: 'modal_opened', vendor: { id: '1', title: 'Purple Gelato', city: 'providence' } },
+        { action: 'pin_clicked', vendor: { id: '2', title: 'Blue Dream', city: 'boston' } },
+        { action: 'pin_clicked', vendor: { id: '3', title: 'OG Kush', city: 'cambridge' } },
+        { action: 'modal_opened', vendor: { id: '3', title: 'OG Kush', city: 'cambridge' } },
+        { action: 'contact', vendor: { id: '3', title: 'OG Kush', city: 'cambridge' } },
+        { action: 'pin_clicked', vendor: { id: '4', title: 'White Widow', city: 'worcester' } },
+        { action: 'modal_opened', vendor: { id: '2', title: 'Blue Dream', city: 'boston' } }
+      ];
+      
+      // Add interactions across different days
+      sampleInteractions.forEach((interaction, index) => {
+        const timestamp = now - (Math.random() * 7 * oneDay); // Random time in past week
+        
+        // Simulate the interaction tracking
+        setTimeout(() => {
+          window.behaviorAnalytics.trackInteraction({
+            ...interaction,
+            timestamp
+          });
+        }, index * 100);
+      });
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Load configuration data
@@ -718,6 +846,7 @@ class AdminManager {
     const container = document.getElementById('config-forms');
     if (!container) return;
     
+<<<<<<< HEAD
     // TODO: Implement different config tabs
     container.innerHTML = `
       <div class="config-group">
@@ -725,6 +854,184 @@ class AdminManager {
         <p>Configuration for ${tabName} coming soon!</p>
       </div>
     `;
+=======
+    switch(tabName) {
+      case 'search':
+        this.loadSearchConfigTab(container);
+        break;
+      default:
+        container.innerHTML = `
+          <div class="config-group">
+            <h4>${tabName} Settings</h4>
+            <p>Configuration for ${tabName} coming soon!</p>
+          </div>
+        `;
+        break;
+    }
+  }
+  
+  // Load search configuration tab
+  loadSearchConfigTab(container) {
+    container.innerHTML = `
+      <div class="search-config-container">
+        
+        <!-- Search Behavior Settings -->
+        <div class="config-group">
+          <h4>🎛️ Search Behavior</h4>
+          <div class="config-row">
+            <label>Fuzzy Search Threshold</label>
+            <input type="range" id="fuzzy-threshold" min="0.3" max="1.0" step="0.1" value="0.6">
+            <span id="threshold-value">0.6</span>
+          </div>
+          <div class="config-row">
+            <label>Max Results Shown</label>
+            <input type="number" id="max-results" min="2" max="10" value="4">
+          </div>
+          <div class="config-row">
+            <label>Min Characters to Search</label>
+            <input type="number" id="min-chars" min="1" max="5" value="2">
+          </div>
+          <div class="config-row">
+            <label>Search Debounce Delay (ms)</label>
+            <input type="number" id="debounce-delay" min="100" max="1000" step="50" value="300">
+          </div>
+        </div>
+
+        <!-- Search UI Settings -->
+        <div class="config-group">
+          <h4>🎨 Search Interface</h4>
+          <div class="config-row">
+            <label>Search Placeholder Text</label>
+            <input type="text" id="search-placeholder" value="Plugs 🔌🔌" maxlength="50">
+          </div>
+          <div class="config-row">
+            <label>Loading Message</label>
+            <input type="text" id="loading-message" value="Loading your area..." maxlength="50">
+          </div>
+          <div class="config-row">
+            <label>No Results Message</label>
+            <input type="text" id="no-results-message" value="No results found" maxlength="50">
+          </div>
+        </div>
+
+        <!-- Cities Management -->
+        <div class="config-group">
+          <h4>🌍 Cities Management</h4>
+          <div class="config-actions">
+            <button class="btn btn-primary" onclick="adminManager.showAddCityModal()">
+              ➕ Add City
+            </button>
+            <button class="btn btn-outline" onclick="adminManager.importCities()">
+              📥 Import CSV
+            </button>
+            <button class="btn btn-outline" onclick="adminManager.exportCities()">
+              📤 Export CSV
+            </button>
+          </div>
+          <div class="cities-table-container">
+            <table class="admin-table" id="cities-table">
+              <thead>
+                <tr>
+                  <th>City</th>
+                  <th>State</th>
+                  <th>Coordinates</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cities-tbody">
+                <tr><td colspan="5">Loading cities...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Product Types Management -->
+        <div class="config-group">
+          <h4>📦 Product Types</h4>
+          <div class="config-actions">
+            <button class="btn btn-primary" onclick="adminManager.showAddProductModal()">
+              ➕ Add Product Type
+            </button>
+          </div>
+          <div class="products-table-container">
+            <table class="admin-table" id="products-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Search Terms</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <tr><td colspan="5">Loading product types...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Search Analytics -->
+        <div class="config-group">
+          <h4>📊 Search Analytics</h4>
+          <div class="analytics-grid">
+            <div class="stat-card">
+              <div class="stat-number" id="total-searches">-</div>
+              <div class="stat-label">Total Searches</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="avg-response-time">-</div>
+              <div class="stat-label">Avg Response Time</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="cache-hit-rate">-</div>
+              <div class="stat-label">Cache Hit Rate</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="failed-searches">-</div>
+              <div class="stat-label">Failed Searches</div>
+            </div>
+          </div>
+          <div class="analytics-charts">
+            <div class="chart-container">
+              <h5>Popular Search Terms</h5>
+              <div id="popular-terms-chart" class="chart-placeholder">Loading chart...</div>
+            </div>
+            <div class="chart-container">
+              <h5>Search Volume by Hour</h5>
+              <div id="search-volume-chart" class="chart-placeholder">Loading chart...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cache Management -->
+        <div class="config-group">
+          <h4>💾 Cache Management</h4>
+          <div class="config-row">
+            <label>Cache Timeout (minutes)</label>
+            <input type="number" id="cache-timeout" min="1" max="60" value="5">
+          </div>
+          <div class="config-actions">
+            <button class="btn btn-warning" onclick="adminManager.clearSearchCache()">
+              🗑️ Clear Search Cache
+            </button>
+            <button class="btn btn-outline" onclick="adminManager.preloadPopularTerms()">
+              ⚡ Preload Popular Terms
+            </button>
+          </div>
+          <div class="cache-stats">
+            <p>Cache Size: <span id="cache-size">-</span> items</p>
+            <p>Last Cleared: <span id="last-cleared">-</span></p>
+          </div>
+        </div>
+
+      </div>
+    `;
+    
+    // Initialize search config data
+    this.initializeSearchConfig();
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 
   // Save configuration
@@ -960,6 +1267,20 @@ class AdminManager {
   // Save vendor
   async saveVendor() {
     try {
+<<<<<<< HEAD
+=======
+      // Check if vendor manager is available and initialized
+      if (!window.vendorManager) {
+        this.showError('Vendor manager not available. Please refresh the page.');
+        return;
+      }
+      
+      if (!window.vendorManager.isInitialized) {
+        this.showError('Vendor manager not initialized. Please wait and try again.');
+        return;
+      }
+      
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       const formData = {
         name: document.getElementById('vendor-name').value,
         color: document.getElementById('vendor-color').value,
@@ -969,6 +1290,12 @@ class AdminManager {
         isActive: document.getElementById('vendor-active').checked
       };
       
+<<<<<<< HEAD
+=======
+      console.log('Saving vendor with data:', formData);
+      console.log('Current vendor ID:', this.currentVendorId);
+      
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       if (!formData.name || !formData.color || !formData.icon) {
         this.showError('Please fill in all required fields');
         return;
@@ -976,11 +1303,29 @@ class AdminManager {
       
       if (this.currentVendorId) {
         // Update existing vendor
+<<<<<<< HEAD
         await window.vendorManager.updateVendor(this.currentVendorId, formData);
         this.showSuccess('Vendor updated successfully');
       } else {
         // Add new vendor
         await window.vendorManager.addVendor(formData);
+=======
+        console.log('Updating vendor:', this.currentVendorId);
+        const result = await window.vendorManager.updateVendor(this.currentVendorId, formData);
+        console.log('Update result:', result);
+        
+        if (result === false) {
+          this.showError('Vendor not found. Please refresh and try again.');
+          return;
+        }
+        
+        this.showSuccess('Vendor updated successfully');
+      } else {
+        // Add new vendor
+        console.log('Adding new vendor');
+        const result = await window.vendorManager.addVendor(formData);
+        console.log('Add result:', result);
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         this.showSuccess('Vendor added successfully');
       }
       
@@ -989,7 +1334,19 @@ class AdminManager {
       
     } catch (error) {
       console.error('Error saving vendor:', error);
+<<<<<<< HEAD
       this.showError('Failed to save vendor');
+=======
+      
+      // More specific error messages
+      if (error.message && error.message.includes('Firebase')) {
+        this.showError('Database connection error. Please check your internet connection.');
+      } else if (error.message && error.message.includes('permission')) {
+        this.showError('Permission denied. Please check your admin privileges.');
+      } else {
+        this.showError(`Failed to save vendor: ${error.message || 'Unknown error'}`);
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     }
   }
 
@@ -1207,6 +1564,688 @@ class AdminManager {
     document.getElementById('location-modal').classList.remove('active');
     this.currentLocationId = null;
   }
+<<<<<<< HEAD
+=======
+
+  // SEARCH CONFIGURATION FUNCTIONS
+
+  // Initialize search configuration data
+  async initializeSearchConfig() {
+    try {
+      // Load current search settings
+      await this.loadSearchSettings();
+      
+      // Load cities and products data
+      await this.loadCitiesData();
+      await this.loadProductTypesData();
+      
+      // Load search analytics
+      await this.loadSearchAnalytics();
+      
+      // Load cache stats
+      this.updateCacheStats();
+      
+      // Set up real-time updates
+      this.setupSearchConfigListeners();
+      
+    } catch (error) {
+      console.error('Error initializing search config:', error);
+      this.showError('Failed to load search configuration');
+    }
+  }
+
+  // Load current search settings
+  async loadSearchSettings() {
+    try {
+      // Get current settings from searchManager and configManager
+      const settings = {
+        fuzzyThreshold: 0.6,
+        maxResults: 4,
+        minChars: 2,
+        debounceDelay: 300,
+        placeholder: "Plugs 🔌🔌",
+        loadingMessage: "Loading your area...",
+        noResultsMessage: "No results found",
+        cacheTimeout: 5
+      };
+      
+      // Update UI with current settings
+      const thresholdSlider = document.getElementById('fuzzy-threshold');
+      const thresholdValue = document.getElementById('threshold-value');
+      
+      if (thresholdSlider && thresholdValue) {
+        thresholdSlider.value = settings.fuzzyThreshold;
+        thresholdValue.textContent = settings.fuzzyThreshold;
+        
+        thresholdSlider.addEventListener('input', (e) => {
+          thresholdValue.textContent = e.target.value;
+        });
+      }
+      
+      const inputs = {
+        'max-results': settings.maxResults,
+        'min-chars': settings.minChars,
+        'debounce-delay': settings.debounceDelay,
+        'search-placeholder': settings.placeholder,
+        'loading-message': settings.loadingMessage,
+        'no-results-message': settings.noResultsMessage,
+        'cache-timeout': settings.cacheTimeout
+      };
+      
+      Object.entries(inputs).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.value = value;
+      });
+      
+    } catch (error) {
+      console.error('Error loading search settings:', error);
+    }
+  }
+
+  // Load cities data for management
+  async loadCitiesData() {
+    try {
+      const tbody = document.getElementById('cities-tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '<tr><td colspan="5">Loading cities...</td></tr>';
+      
+      // Get cities from config manager
+      let cities = [];
+      if (window.configManager && window.configManager.isInitialized) {
+        const citiesConfig = window.configManager.getConfig('cities');
+        cities = citiesConfig.items || [];
+      }
+      
+      if (cities.length === 0) {
+        // Fallback to hardcoded cities from search-utils.js
+        cities = window.getMajorCities ? window.getMajorCities() : [];
+        cities = cities.map(city => ({
+          ...city,
+          isActive: true,
+          id: city.key
+        }));
+      }
+      
+      const citiesHTML = cities.map(city => `
+        <tr data-city-id="${city.id || city.key}">
+          <td>${city.name}</td>
+          <td>${city.state}</td>
+          <td>${city.lat}, ${city.lng}</td>
+          <td>
+            <span class="status-badge ${city.isActive ? 'active' : 'inactive'}">
+              ${city.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="adminManager.editCity('${city.id || city.key}')">
+              ✏️ Edit
+            </button>
+            <button class="btn btn-sm ${city.isActive ? 'btn-warning' : 'btn-success'}" 
+                    onclick="adminManager.toggleCityStatus('${city.id || city.key}')">
+              ${city.isActive ? '❌' : '✅'}
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="adminManager.deleteCity('${city.id || city.key}')">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      `).join('');
+      
+      tbody.innerHTML = citiesHTML;
+      
+    } catch (error) {
+      console.error('Error loading cities data:', error);
+      const tbody = document.getElementById('cities-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5">Error loading cities</td></tr>';
+    }
+  }
+
+  // Load product types data for management
+  async loadProductTypesData() {
+    try {
+      const tbody = document.getElementById('products-tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '<tr><td colspan="5">Loading product types...</td></tr>';
+      
+      // Get product types from config manager
+      let products = [];
+      if (window.configManager && window.configManager.isInitialized) {
+        const productsConfig = window.configManager.getConfig('product-types');
+        products = productsConfig.items || [];
+      }
+      
+      if (products.length === 0) {
+        // Fallback to hardcoded products
+        const fallbackProducts = window.getProductTypes ? window.getProductTypes() : [];
+        products = fallbackProducts.map((product, index) => ({
+          name: product,
+          key: product.toLowerCase().replace(' pack', ''),
+          searchTerms: [product.toLowerCase()],
+          isActive: true,
+          priority: index + 1,
+          id: product.toLowerCase().replace(' ', '-')
+        }));
+      }
+      
+      const productsHTML = products.map(product => `
+        <tr data-product-id="${product.id || product.key}">
+          <td>${product.name}</td>
+          <td>
+            <span class="search-terms">
+              ${(product.searchTerms || [product.name.toLowerCase()]).join(', ')}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge ${product.isActive ? 'active' : 'inactive'}">
+              ${product.isActive ? 'Active' : 'Inactive'}
+            </span>
+          </td>
+          <td>${product.priority || 1}</td>
+          <td>
+            <button class="btn btn-sm btn-outline" onclick="adminManager.editProduct('${product.id || product.key}')">
+              ✏️ Edit
+            </button>
+            <button class="btn btn-sm ${product.isActive ? 'btn-warning' : 'btn-success'}" 
+                    onclick="adminManager.toggleProductStatus('${product.id || product.key}')">
+              ${product.isActive ? '❌' : '✅'}
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="adminManager.deleteProduct('${product.id || product.key}')">
+              🗑️
+            </button>
+          </td>
+        </tr>
+      `).join('');
+      
+      tbody.innerHTML = productsHTML;
+      
+    } catch (error) {
+      console.error('Error loading product types:', error);
+      const tbody = document.getElementById('products-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5">Error loading product types</td></tr>';
+    }
+  }
+
+  // Load search analytics data
+  async loadSearchAnalytics() {
+    try {
+      // Mock analytics data for now - in production this would come from Firebase/Analytics
+      const analytics = {
+        totalSearches: 1250,
+        avgResponseTime: '45ms',
+        cacheHitRate: '78%',
+        failedSearches: 23
+      };
+      
+      // Update analytics display
+      const elements = {
+        'total-searches': analytics.totalSearches,
+        'avg-response-time': analytics.avgResponseTime,
+        'cache-hit-rate': analytics.cacheHitRate,
+        'failed-searches': analytics.failedSearches
+      };
+      
+      Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+      });
+      
+      // Load popular terms and search volume charts
+      this.loadSearchCharts();
+      
+    } catch (error) {
+      console.error('Error loading search analytics:', error);
+    }
+  }
+
+  // Load search charts (simplified text-based for now)
+  loadSearchCharts() {
+    const popularTermsChart = document.getElementById('popular-terms-chart');
+    const searchVolumeChart = document.getElementById('search-volume-chart');
+    
+    if (popularTermsChart) {
+      popularTermsChart.innerHTML = `
+        <div class="chart-list">
+          <div class="chart-item">1. "indica pack" - 245 searches</div>
+          <div class="chart-item">2. "boston" - 189 searches</div>
+          <div class="chart-item">3. "sativa pack" - 167 searches</div>
+          <div class="chart-item">4. "providence" - 134 searches</div>
+          <div class="chart-item">5. "hybrid pack" - 98 searches</div>
+        </div>
+      `;
+    }
+    
+    if (searchVolumeChart) {
+      searchVolumeChart.innerHTML = `
+        <div class="chart-list">
+          <div class="chart-item">12-1 PM: 45 searches</div>
+          <div class="chart-item">1-2 PM: 38 searches</div>
+          <div class="chart-item">6-7 PM: 67 searches</div>
+          <div class="chart-item">7-8 PM: 52 searches</div>
+          <div class="chart-item">8-9 PM: 41 searches</div>
+        </div>
+      `;
+    }
+  }
+
+  // Update cache statistics
+  updateCacheStats() {
+    try {
+      // Get cache stats from cache manager
+      const cacheSize = window.cacheManager ? Object.keys(window.cacheManager.cache || {}).length : 0;
+      const lastCleared = localStorage.getItem('search-cache-cleared') || 'Never';
+      
+      const cacheSizeEl = document.getElementById('cache-size');
+      const lastClearedEl = document.getElementById('last-cleared');
+      
+      if (cacheSizeEl) cacheSizeEl.textContent = cacheSize;
+      if (lastClearedEl) lastClearedEl.textContent = lastCleared;
+      
+    } catch (error) {
+      console.error('Error updating cache stats:', error);
+    }
+  }
+
+  // Set up search configuration listeners
+  setupSearchConfigListeners() {
+    // Add event listeners for real-time updates
+    const inputs = ['fuzzy-threshold', 'max-results', 'min-chars', 'debounce-delay'];
+    inputs.forEach(id => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.addEventListener('change', () => {
+          this.updateSearchSettings();
+        });
+      }
+    });
+  }
+
+  // Update search settings in real-time
+  async updateSearchSettings() {
+    try {
+      const settings = {
+        fuzzyThreshold: parseFloat(document.getElementById('fuzzy-threshold')?.value || 0.6),
+        maxResults: parseInt(document.getElementById('max-results')?.value || 4),
+        minChars: parseInt(document.getElementById('min-chars')?.value || 2),
+        debounceDelay: parseInt(document.getElementById('debounce-delay')?.value || 300)
+      };
+      
+      // Update search manager if available
+      if (window.searchManager) {
+        window.searchManager.fuzzyThreshold = settings.fuzzyThreshold;
+        window.searchManager.maxResults = settings.maxResults;
+        window.searchManager.minChars = settings.minChars;
+        window.searchManager.debounceDelay = settings.debounceDelay;
+      }
+      
+      // Save to Firebase/config
+      if (window.configManager) {
+        await window.configManager.updateConfig('search-settings', settings);
+      }
+      
+      this.showSuccess('Search settings updated');
+      
+    } catch (error) {
+      console.error('Error updating search settings:', error);
+      this.showError('Failed to update search settings');
+    }
+  }
+
+  // Show add city modal
+  showAddCityModal() {
+    // Create a simple prompt for now - could be expanded to a full modal
+    const name = prompt('City name:');
+    const state = prompt('State abbreviation (e.g., MA):');
+    const lat = parseFloat(prompt('Latitude:'));
+    const lng = parseFloat(prompt('Longitude:'));
+    
+    if (name && state && !isNaN(lat) && !isNaN(lng)) {
+      this.addCity({ name, state, lat, lng });
+    }
+  }
+
+  // Add new city
+  async addCity(cityData) {
+    try {
+      const newCity = {
+        ...cityData,
+        id: cityData.name.toLowerCase().replace(/\s+/g, '-'),
+        key: cityData.name.toLowerCase().replace(/\s+/g, '-'),
+        isActive: true
+      };
+      
+      // Add to config manager
+      if (window.configManager) {
+        const citiesConfig = window.configManager.getConfig('cities');
+        const cities = citiesConfig.items || [];
+        cities.push(newCity);
+        
+        await window.configManager.updateConfig('cities', { items: cities });
+      }
+      
+      this.showSuccess('City added successfully');
+      this.loadCitiesData();
+      
+    } catch (error) {
+      console.error('Error adding city:', error);
+      this.showError('Failed to add city');
+    }
+  }
+
+  // Edit city
+  editCity(cityId) {
+    // Simple edit for now - could be expanded to a modal
+    const name = prompt('Edit city name:');
+    if (name) {
+      this.updateCity(cityId, { name });
+    }
+  }
+
+  // Update city
+  async updateCity(cityId, updates) {
+    try {
+      if (window.configManager) {
+        const citiesConfig = window.configManager.getConfig('cities');
+        const cities = citiesConfig.items || [];
+        const cityIndex = cities.findIndex(c => c.id === cityId || c.key === cityId);
+        
+        if (cityIndex >= 0) {
+          cities[cityIndex] = { ...cities[cityIndex], ...updates };
+          await window.configManager.updateConfig('cities', { items: cities });
+          
+          this.showSuccess('City updated successfully');
+          this.loadCitiesData();
+        }
+      }
+    } catch (error) {
+      console.error('Error updating city:', error);
+      this.showError('Failed to update city');
+    }
+  }
+
+  // Toggle city status
+  async toggleCityStatus(cityId) {
+    try {
+      if (window.configManager) {
+        const citiesConfig = window.configManager.getConfig('cities');
+        const cities = citiesConfig.items || [];
+        const city = cities.find(c => c.id === cityId || c.key === cityId);
+        
+        if (city) {
+          await this.updateCity(cityId, { isActive: !city.isActive });
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling city status:', error);
+      this.showError('Failed to toggle city status');
+    }
+  }
+
+  // Delete city
+  async deleteCity(cityId) {
+    if (confirm('Are you sure you want to delete this city?')) {
+      try {
+        if (window.configManager) {
+          const citiesConfig = window.configManager.getConfig('cities');
+          let cities = citiesConfig.items || [];
+          cities = cities.filter(c => c.id !== cityId && c.key !== cityId);
+          
+          await window.configManager.updateConfig('cities', { items: cities });
+          
+          this.showSuccess('City deleted successfully');
+          this.loadCitiesData();
+        }
+      } catch (error) {
+        console.error('Error deleting city:', error);
+        this.showError('Failed to delete city');
+      }
+    }
+  }
+
+  // Show add product modal
+  showAddProductModal() {
+    const name = prompt('Product type name (e.g., "Premium Pack"):');
+    const searchTerms = prompt('Search terms (comma-separated):');
+    
+    if (name && searchTerms) {
+      this.addProduct({
+        name,
+        searchTerms: searchTerms.split(',').map(t => t.trim())
+      });
+    }
+  }
+
+  // Add new product type
+  async addProduct(productData) {
+    try {
+      const newProduct = {
+        ...productData,
+        id: productData.name.toLowerCase().replace(/\s+/g, '-'),
+        key: productData.name.toLowerCase().replace(' pack', ''),
+        isActive: true,
+        priority: 10
+      };
+      
+      if (window.configManager) {
+        const productsConfig = window.configManager.getConfig('product-types');
+        const products = productsConfig.items || [];
+        products.push(newProduct);
+        
+        await window.configManager.updateConfig('product-types', { items: products });
+      }
+      
+      this.showSuccess('Product type added successfully');
+      this.loadProductTypesData();
+      
+    } catch (error) {
+      console.error('Error adding product:', error);
+      this.showError('Failed to add product type');
+    }
+  }
+
+  // Edit product type
+  editProduct(productId) {
+    const name = prompt('Edit product name:');
+    if (name) {
+      this.updateProduct(productId, { name });
+    }
+  }
+
+  // Update product
+  async updateProduct(productId, updates) {
+    try {
+      if (window.configManager) {
+        const productsConfig = window.configManager.getConfig('product-types');
+        const products = productsConfig.items || [];
+        const productIndex = products.findIndex(p => p.id === productId || p.key === productId);
+        
+        if (productIndex >= 0) {
+          products[productIndex] = { ...products[productIndex], ...updates };
+          await window.configManager.updateConfig('product-types', { items: products });
+          
+          this.showSuccess('Product type updated successfully');
+          this.loadProductTypesData();
+        }
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      this.showError('Failed to update product type');
+    }
+  }
+
+  // Toggle product status
+  async toggleProductStatus(productId) {
+    try {
+      if (window.configManager) {
+        const productsConfig = window.configManager.getConfig('product-types');
+        const products = productsConfig.items || [];
+        const product = products.find(p => p.id === productId || p.key === productId);
+        
+        if (product) {
+          await this.updateProduct(productId, { isActive: !product.isActive });
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling product status:', error);
+      this.showError('Failed to toggle product status');
+    }
+  }
+
+  // Delete product type
+  async deleteProduct(productId) {
+    if (confirm('Are you sure you want to delete this product type?')) {
+      try {
+        if (window.configManager) {
+          const productsConfig = window.configManager.getConfig('product-types');
+          let products = productsConfig.items || [];
+          products = products.filter(p => p.id !== productId && p.key !== productId);
+          
+          await window.configManager.updateConfig('product-types', { items: products });
+          
+          this.showSuccess('Product type deleted successfully');
+          this.loadProductTypesData();
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        this.showError('Failed to delete product type');
+      }
+    }
+  }
+
+  // Import cities from CSV
+  importCities() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        this.processCityCSV(file);
+      }
+    };
+    input.click();
+  }
+
+  // Process city CSV file
+  async processCityCSV(file) {
+    try {
+      const text = await file.text();
+      const lines = text.split('\n');
+      const cities = [];
+      
+      // Skip header line
+      for (let i = 1; i < lines.length; i++) {
+        const [name, state, lat, lng] = lines[i].split(',');
+        if (name && state && lat && lng) {
+          cities.push({
+            name: name.trim(),
+            state: state.trim(),
+            lat: parseFloat(lat.trim()),
+            lng: parseFloat(lng.trim()),
+            id: name.toLowerCase().replace(/\s+/g, '-'),
+            key: name.toLowerCase().replace(/\s+/g, '-'),
+            isActive: true
+          });
+        }
+      }
+      
+      // Add cities to config
+      if (cities.length > 0 && window.configManager) {
+        const citiesConfig = window.configManager.getConfig('cities');
+        const existingCities = citiesConfig.items || [];
+        const allCities = [...existingCities, ...cities];
+        
+        await window.configManager.updateConfig('cities', { items: allCities });
+        
+        this.showSuccess(`Imported ${cities.length} cities successfully`);
+        this.loadCitiesData();
+      }
+      
+    } catch (error) {
+      console.error('Error processing CSV:', error);
+      this.showError('Failed to import cities from CSV');
+    }
+  }
+
+  // Export cities to CSV
+  exportCities() {
+    try {
+      const citiesConfig = window.configManager?.getConfig('cities');
+      const cities = citiesConfig?.items || [];
+      
+      if (cities.length === 0) {
+        this.showError('No cities to export');
+        return;
+      }
+      
+      const csvContent = [
+        'Name,State,Latitude,Longitude,Active',
+        ...cities.map(city => `${city.name},${city.state},${city.lat},${city.lng},${city.isActive}`)
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'packslist-cities.csv';
+      link.click();
+      
+      URL.revokeObjectURL(url);
+      this.showSuccess('Cities exported successfully');
+      
+    } catch (error) {
+      console.error('Error exporting cities:', error);
+      this.showError('Failed to export cities');
+    }
+  }
+
+  // Clear search cache
+  async clearSearchCache() {
+    if (confirm('Are you sure you want to clear the search cache?')) {
+      try {
+        if (window.cacheManager) {
+          window.cacheManager.clearCache();
+        }
+        
+        if (window.searchManager) {
+          window.searchManager.clearSearch();
+        }
+        
+        localStorage.setItem('search-cache-cleared', new Date().toLocaleString());
+        
+        this.showSuccess('Search cache cleared successfully');
+        this.updateCacheStats();
+        
+      } catch (error) {
+        console.error('Error clearing cache:', error);
+        this.showError('Failed to clear search cache');
+      }
+    }
+  }
+
+  // Preload popular search terms
+  async preloadPopularTerms() {
+    try {
+      if (window.searchManager) {
+        // Preload popular suggestions
+        const popularTerms = ['indica pack', 'sativa pack', 'boston', 'providence', 'hybrid pack'];
+        
+        for (const term of popularTerms) {
+          window.searchManager.search(term, 1); // Cache the results
+        }
+      }
+      
+      this.showSuccess('Popular terms preloaded successfully');
+      this.updateCacheStats();
+      
+    } catch (error) {
+      console.error('Error preloading terms:', error);
+      this.showError('Failed to preload popular terms');
+    }
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 }
 
 // Initialize admin manager when DOM is ready

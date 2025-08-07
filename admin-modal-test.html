@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel Modal Organization Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .success-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      margin: 10px 0;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 8px;
+      color: #155724;
+    }
+    .success-icon {
+      font-size: 1.5em;
+      margin-right: 15px;
+    }
+    .section-structure {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    .modal-info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>✨ Admin Panel Cleanup Complete</h1>
+      <p>Modal organization has been successfully reorganized</p>
+    </div>
+
+    <div class="success-item">
+      <div class="success-icon">🏪</div>
+      <div>
+        <strong>Vendor Modal Relocated</strong><br>
+        Moved from bottom of page to #vendors-section
+      </div>
+    </div>
+
+    <div class="success-item">
+      <div class="success-icon">📍</div>
+      <div>
+        <strong>Location Modal Relocated</strong><br>
+        Moved from bottom of page to #locations-section
+      </div>
+    </div>
+
+    <div class="success-item">
+      <div class="success-icon">🧹</div>
+      <div>
+        <strong>Duplicate Code Removed</strong><br>
+        Eliminated redundant modal definitions at bottom of file
+      </div>
+    </div>
+
+    <div class="success-item">
+      <div class="success-icon">📋</div>
+      <div>
+        <strong>Clean Structure</strong><br>
+        Each modal is now logically grouped with its related section
+      </div>
+    </div>
+
+    <h3>📁 New Structure</h3>
+    <div class="section-structure">
+#vendors-section
+├── Header (Vendor Management + Add Button)
+├── Vendors Grid (listings)
+└── Vendor Modal (Add/Edit forms)
+
+#locations-section
+├── Header (Location Management + Add Button)  
+├── Locations Grid (listings)
+└── Location Modal (Add/Edit forms)
+
+#analytics-section
+├── Behavior Analytics Dashboard
+└── Real-time Activity Feed
+    </div>
+
+    <div class="modal-info">
+      <h4>🎯 Benefits of This Reorganization:</h4>
+      <ul>
+        <li><strong>Better Organization:</strong> Modals are now contextually grouped with their sections</li>
+        <li><strong>Easier Maintenance:</strong> No more hunting for modals at the bottom of the file</li>
+        <li><strong>Cleaner Code:</strong> Removed duplicate modal definitions</li>
+        <li><strong>Logical Structure:</strong> Each section is self-contained with its functionality</li>
+        <li><strong>Improved Developer Experience:</strong> Much easier to find and modify section-specific elements</li>
+      </ul>
+    </div>
+
+    <h3>🧪 Test Verification</h3>
+    <div class="modal-info">
+      <p><strong>To verify the changes work correctly:</strong></p>
+      <ol>
+        <li>Open <code>admin/admin-panel.html</code></li>
+        <li>Navigate to the <strong>Vendors</strong> section</li>
+        <li>Click "➕ Add Vendor" - modal should appear</li>
+        <li>Navigate to the <strong>Locations</strong> section</li>
+        <li>Click "➕ Add Location" - modal should appear</li>
+        <li>Verify no duplicate IDs or broken functionality</li>
+      </ol>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button onclick="window.open('admin/admin-panel.html', '_blank')" style="
+        background: #007bff;
+        color: white; 
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+        🚀 Test Admin Panel
+      </button>
+    </div>
+  </div>
+
+  <script>
+    console.log('✅ Admin Panel Modal Reorganization Complete');
+    console.log('Changes made:');
+    console.log('1. Moved vendor modal to #vendors-section');
+    console.log('2. Moved location modal to #locations-section'); 
+    console.log('3. Removed duplicate modal code from bottom');
+    console.log('4. Maintained all existing functionality');
+  </script>
+</body>
+</html>

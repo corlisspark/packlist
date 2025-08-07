@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Behavior Analytics Test - PacksList Admin</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    .test-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .test-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 30px 0;
+    }
+    .demo-card {
+      padding: 20px;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .demo-card:hover {
+      border-color: #007bff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .demo-icon {
+      font-size: 2em;
+      margin-bottom: 10px;
+    }
+    .instructions {
+      background: #e3f2fd;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    .feature-item {
+      padding: 15px;
+      border-left: 4px solid #007bff;
+      background: #f8f9fa;
+      border-radius: 0 8px 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <div class="test-header">
+      <h1>📊 Behavior Analytics System</h1>
+      <p>Advanced pin interaction tracking for PacksList Admin</p>
+    </div>
+
+    <div class="instructions">
+      <h3>🧪 How to Test</h3>
+      <ol>
+        <li><strong>Open Admin Panel:</strong> Navigate to <code>admin/admin-panel.html</code> and go to Analytics section</li>
+        <li><strong>Generate Test Data:</strong> Click the demo buttons below to simulate user interactions</li>
+        <li><strong>View Real-time Updates:</strong> Watch the admin dashboard update with live data</li>
+        <li><strong>Check Main App:</strong> Pin clicks on the main map will automatically show in admin</li>
+      </ol>
+    </div>
+
+    <h3>🎯 Demo Interactions</h3>
+    <div class="demo-grid">
+      <div class="demo-card" onclick="simulateInteraction('pin_clicked', 'Purple Gelato', 'providence')">
+        <div class="demo-icon">🎯</div>
+        <h4>Pin Click</h4>
+        <p>Simulate pin click</p>
+      </div>
+      
+      <div class="demo-card" onclick="simulateInteraction('modal_opened', 'Blue Dream', 'boston')">
+        <div class="demo-icon">👁️</div>
+        <h4>Modal View</h4>
+        <p>Simulate modal open</p>
+      </div>
+      
+      <div class="demo-card" onclick="simulateInteraction('contact', 'OG Kush', 'cambridge')">
+        <div class="demo-icon">💬</div>
+        <h4>Contact</h4>
+        <p>Simulate contact action</p>
+      </div>
+      
+      <div class="demo-card" onclick="simulateInteraction('search', 'White Widow', 'worcester')">
+        <div class="demo-icon">🔍</div>
+        <h4>Search</h4>
+        <p>Simulate search action</p>
+      </div>
+    </div>
+
+    <h3>✨ Analytics Features</h3>
+    <div class="features-grid">
+      <div class="feature-item">
+        <h4>📈 Real-time Metrics</h4>
+        <p>Live tracking of pin clicks, modal views, session time, and mobile usage with percentage changes from previous day</p>
+      </div>
+      
+      <div class="feature-item">
+        <h4>🗺️ Hotspot Analysis</h4>
+        <p>Identifies most popular locations based on user interactions, ranked by engagement levels</p>
+      </div>
+      
+      <div class="feature-item">
+        <h4>📊 Popular Listings</h4>
+        <p>Tracks which listings get the most clicks and views, helping identify trending content</p>
+      </div>
+      
+      <div class="feature-item">
+        <h4>⏱️ User Journey Flow</h4>
+        <p>Visualizes the complete user path from map load to contact, showing conversion funnel</p>
+      </div>
+      
+      <div class="feature-item">
+        <h4>🔴 Live Activity Feed</h4>
+        <p>Real-time stream of all user interactions with timestamps and auto-refresh capability</p>
+      </div>
+      
+      <div class="feature-item">
+        <h4>📱 Device Analytics</h4>
+        <p>Tracks mobile vs desktop usage patterns to optimize user experience across platforms</p>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <h3>💾 Data Persistence</h3>
+      <p>All analytics data is stored in localStorage and persists across sessions. The system automatically tracks real interactions from the main app and aggregates them for admin viewing.</p>
+      
+      <h3>🔄 Auto-refresh</h3>
+      <p>The analytics dashboard updates every 30 seconds when auto-refresh is enabled. You can toggle this in the admin panel or clear the activity feed as needed.</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <button onclick="window.open('admin/admin-panel.html#analytics', '_blank')" style="
+        background: #007bff;
+        color: white; 
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background 0.3s ease;
+      " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+        🚀 Open Admin Analytics
+      </button>
+      
+      <button onclick="generateSampleData()" style="
+        background: #28a745;
+        color: white; 
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      " onmouseover="this.style.background='#218838'" onmouseout="this.style.background='#28a745'">
+        📊 Generate Sample Data
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Simulate user interactions for testing
+    function simulateInteraction(action, title, city) {
+      console.log(`Simulating ${action} for ${title} in ${city}`);
+      
+      // Create and dispatch custom event
+      const event = new CustomEvent('vendorInteraction', {
+        detail: {
+          action: action,
+          vendor: {
+            id: Math.random().toString(36).substr(2, 9),
+            title: title,
+            city: city
+          },
+          timestamp: Date.now()
+        }
+      });
+      
+      window.dispatchEvent(event);
+      
+      // Visual feedback
+      const card = event.target || document.querySelector(`[onclick*="${action}"]`);
+      if (card) {
+        card.style.background = '#e3f2fd';
+        setTimeout(() => {
+          card.style.background = '';
+        }, 500);
+      }
+      
+      alert(`✅ Simulated ${action.replace('_', ' ')} for "${title}"\n\nCheck the admin panel analytics to see this interaction!`);
+    }
+
+    // Generate multiple sample interactions
+    function generateSampleData() {
+      const interactions = [
+        { action: 'pin_clicked', title: 'Purple Haze', city: 'providence' },
+        { action: 'modal_opened', title: 'Green Crack', city: 'boston' },
+        { action: 'pin_clicked', title: 'Super Lemon Haze', city: 'cambridge' },
+        { action: 'contact', title: 'Gorilla Glue', city: 'worcester' },
+        { action: 'search', title: 'Strawberry Cough', city: 'newport' },
+        { action: 'pin_clicked', title: 'Jack Herer', city: 'providence' },
+        { action: 'modal_opened', title: 'Pineapple Express', city: 'boston' },
+        { action: 'contact', title: 'Blue Cheese', city: 'cambridge' }
+      ];
+      
+      interactions.forEach((interaction, index) => {
+        setTimeout(() => {
+          const event = new CustomEvent('vendorInteraction', {
+            detail: {
+              ...interaction,
+              vendor: {
+                id: Math.random().toString(36).substr(2, 9),
+                title: interaction.title,
+                city: interaction.city
+              },
+              timestamp: Date.now() - (Math.random() * 3600000) // Random time in past hour
+            }
+          });
+          
+          window.dispatchEvent(event);
+        }, index * 200);
+      });
+      
+      alert(`🎉 Generated ${interactions.length} sample interactions!\n\nOpen the admin panel to see the analytics dashboard populate with data.`);
+    }
+
+    // Log system status
+    console.log('📊 Behavior Analytics Test Page Ready');
+    console.log('Available functions:');
+    console.log('- simulateInteraction(action, title, city)');
+    console.log('- generateSampleData()');
+  </script>
+</body>
+</html>

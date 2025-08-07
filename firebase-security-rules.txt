@@ -195,6 +195,19 @@ service cloud.firestore {
       allow delete: if false;
     }
     
+<<<<<<< HEAD
+=======
+    // Admin configuration collection (for vendor management, etc.)
+    match /admin_config/{configType} {
+      // During initial setup, allow any authenticated user to access admin config
+      // TODO: Change this to isAdminByEmail() after proper admin setup
+      allow read, create, update: if isAuthenticated();
+      
+      // Admin configuration cannot be deleted (to prevent data loss)
+      allow delete: if isSuperAdminByEmail();
+    }
+    
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     // Notifications collection
     match /notifications/{notificationId} {
       // Users can read their own notifications

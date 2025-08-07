@@ -90,12 +90,17 @@ class VendorManager {
     while (attempts < maxAttempts) {
       if (window.db) {
         this.db = window.db;
+<<<<<<< HEAD
+=======
+        console.log('VendorManager: Firebase database connected');
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         return;
       }
       await new Promise(resolve => setTimeout(resolve, 100));
       attempts++;
     }
     
+<<<<<<< HEAD
     throw new Error('Database not available after waiting');
   }
 
@@ -111,6 +116,42 @@ class VendorManager {
       } else {
         console.log('VendorManager: No vendor config found, creating default');
         await this.createDefaultVendorConfig();
+=======
+    console.warn('VendorManager: Firebase not available, using localStorage fallback');
+    this.db = null; // Will trigger localStorage fallback
+  }
+
+  // Load vendor configuration from Firebase or localStorage
+  async loadVendorConfig() {
+    try {
+      if (this.db) {
+        // Load from Firebase
+        const vendorConfigDoc = await this.db.collection('admin_config').doc('vendors').get();
+        
+        if (vendorConfigDoc.exists) {
+          const config = vendorConfigDoc.data();
+          this.vendors = config.vendors || [];
+          console.log('VendorManager: Loaded', this.vendors.length, 'vendors from Firebase');
+        } else {
+          console.log('VendorManager: No vendor config found in Firebase, creating default');
+          await this.createDefaultVendorConfig();
+        }
+      } else {
+        // Load from localStorage
+        console.log('VendorManager: Loading vendor configuration from localStorage...');
+        const storedConfig = localStorage.getItem('packslist_vendor_config');
+        
+        if (storedConfig) {
+          const config = JSON.parse(storedConfig);
+          this.vendors = config.vendors || [];
+          console.log('VendorManager: Loaded', this.vendors.length, 'vendors from localStorage');
+        } else {
+          console.log('VendorManager: No vendor config found in localStorage, using default');
+          this.vendors = this.defaultConfig.vendors;
+          // Save default config to localStorage
+          await this.saveVendorConfig();
+        }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       }
       
       // Ensure vendors are sorted by priority
@@ -346,6 +387,7 @@ class VendorManager {
     return true;
   }
 
+<<<<<<< HEAD
   // Save vendor configuration to Firebase
   async saveVendorConfig() {
     try {
@@ -356,6 +398,35 @@ class VendorManager {
       });
       
       console.log('VendorManager: Vendor configuration saved');
+=======
+  // Save vendor configuration to Firebase or localStorage
+  async saveVendorConfig() {
+    try {
+      if (this.db) {
+        // Save to Firebase
+        console.log('VendorManager: Saving vendor configuration to Firebase...');
+        
+        await this.db.collection('admin_config').doc('vendors').set({
+          vendors: this.vendors,
+          lastUpdated: new Date().toISOString(),
+          version: '1.0'
+        });
+        
+        console.log('VendorManager: Vendor configuration saved to Firebase successfully');
+      } else {
+        // Fallback to localStorage
+        console.log('VendorManager: Saving vendor configuration to localStorage...');
+        
+        const config = {
+          vendors: this.vendors,
+          lastUpdated: new Date().toISOString(),
+          version: '1.0'
+        };
+        
+        localStorage.setItem('packslist_vendor_config', JSON.stringify(config));
+        console.log('VendorManager: Vendor configuration saved to localStorage successfully');
+      }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       
       // Notify systems of vendor update
       document.dispatchEvent(new CustomEvent('vendorsUpdated', {
@@ -364,7 +435,20 @@ class VendorManager {
       
     } catch (error) {
       console.error('VendorManager: Error saving vendor config:', error);
+<<<<<<< HEAD
       throw error;
+=======
+      
+      // Add more specific error information
+      if (error.code) {
+        console.error('Firebase error code:', error.code);
+      }
+      if (error.message) {
+        console.error('Error message:', error.message);
+      }
+      
+      throw new Error(`Failed to save vendor configuration: ${error.message}`);
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     }
   }
 

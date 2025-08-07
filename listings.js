@@ -196,7 +196,15 @@ function displayListings() {
     return;
   }
   
+<<<<<<< HEAD
   listingsGrid.innerHTML = '';
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(listingsGrid, '');
+  } else {
+    listingsGrid.innerHTML = '';
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   console.log(`Displaying ${filteredVendorData.length} items with filter: ${currentFilter}`);
   
   // Apply current filter to location-filtered data
@@ -217,7 +225,16 @@ function displayListings() {
   }
   
   if (filteredVendors.length === 0) {
+<<<<<<< HEAD
     listingsGrid.innerHTML = '<div class="loading-state">No listings found in your area</div>';
+=======
+    const noListingsHTML = '<div class="loading-state">No listings found in your area</div>';
+    if (window.domUtils) {
+      window.domUtils.setHTML(listingsGrid, noListingsHTML);
+    } else {
+      listingsGrid.innerHTML = noListingsHTML;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     return;
   }
   
@@ -363,14 +380,31 @@ function setupEventListeners() {
 function displayFilteredListings(vendors) {
   const listingsGrid = document.getElementById('listings-grid');
   const listingsCount = document.getElementById('listings-count');
+<<<<<<< HEAD
   listingsGrid.innerHTML = '';
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(listingsGrid, '');
+  } else {
+    listingsGrid.innerHTML = '';
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   
   // Update count
   const count = vendors.length;
   listingsCount.textContent = `${count} listing${count !== 1 ? 's' : ''} found`;
   
   if (vendors.length === 0) {
+<<<<<<< HEAD
     listingsGrid.innerHTML = '<div class="loading-state">No listings found</div>';
+=======
+    const noListingsHTML = '<div class="loading-state">No listings found</div>';
+    if (window.domUtils) {
+      window.domUtils.setHTML(listingsGrid, noListingsHTML);
+    } else {
+      listingsGrid.innerHTML = noListingsHTML;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     return;
   }
   
@@ -383,7 +417,16 @@ function displayFilteredListings(vendors) {
 // Show error message
 function showError(message) {
   const listingsGrid = document.getElementById('listings-grid');
+<<<<<<< HEAD
   listingsGrid.innerHTML = `<div class="loading-state" style="color: #dc3545;">${message}</div>`;
+=======
+  const errorHTML = `<div class="loading-state" style="color: #dc3545;">${message}</div>`;
+  if (window.domUtils) {
+    window.domUtils.setHTML(listingsGrid, errorHTML);
+  } else {
+    listingsGrid.innerHTML = errorHTML;
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 }
 
 // Listen for vendor system updates

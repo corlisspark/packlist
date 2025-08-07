@@ -92,7 +92,13 @@ function initMap() {
 // Initialize all dynamic systems
 async function initializeDynamicSystems() {
   try {
+<<<<<<< HEAD
     console.log('Initializing dynamic systems...');
+=======
+    if (window.errorHandler) {
+      window.errorHandler.debug('Initializing dynamic systems...');
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     
     // Initialize managers in sequence
     await window.configManager.initialize();
@@ -104,9 +110,21 @@ async function initializeDynamicSystems() {
     // Update UI with dynamic content
     updateDynamicContent();
     
+<<<<<<< HEAD
     console.log('Dynamic systems initialized successfully');
   } catch (error) {
     console.error('Dynamic systems initialization failed:', error);
+=======
+    if (window.errorHandler) {
+      window.errorHandler.info('Dynamic systems initialized successfully');
+    }
+  } catch (error) {
+    if (window.errorHandler) {
+      window.errorHandler.handleError(error, 'Dynamic Systems Initialization');
+    } else {
+      console.error('Dynamic systems initialization failed:', error);
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     // Continue with fallback behavior
   }
 }
@@ -127,7 +145,15 @@ async function initializeLocationAwareness() {
     
     isLocationInitialized = true;
   } catch (error) {
+<<<<<<< HEAD
     console.error('Location initialization error:', error);
+=======
+    if (window.errorHandler) {
+      window.errorHandler.handleError(error, 'Location Initialization');
+    } else {
+      console.error('Location initialization error:', error);
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     updateLocationDisplay('Location unavailable');
   }
 }
@@ -146,9 +172,21 @@ function updateDynamicContent() {
     // Update location indicator
     updateLocationDisplay();
     
+<<<<<<< HEAD
     console.log('Dynamic content updated');
   } catch (error) {
     console.error('Failed to update dynamic content:', error);
+=======
+    if (window.errorHandler) {
+      window.errorHandler.debug('Dynamic content updated');
+    }
+  } catch (error) {
+    if (window.errorHandler) {
+      window.errorHandler.handleError(error, 'Dynamic Content Update');
+    } else {
+      console.error('Failed to update dynamic content:', error);
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   }
 }
 
@@ -237,7 +275,15 @@ async function loadVendorData() {
     // Initialize search data
     window.searchManager.initializeSearchData(vendorData);
   } catch (error) {
+<<<<<<< HEAD
     console.error("Error loading vendor data:", error);
+=======
+    if (window.errorHandler) {
+      window.errorHandler.handleError(error, 'Vendor Data Loading');
+    } else {
+      console.error("Error loading vendor data:", error);
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     showError("Failed to load vendor data");
   }
 }
@@ -264,7 +310,11 @@ function createVendorCard(vendor) {
       ${vendor.images.length > 1 ? `<div class="image-count">+${vendor.images.length - 1}</div>` : ''}
     </div>` : '';
 
+<<<<<<< HEAD
   card.innerHTML = `
+=======
+  const cardContent = `
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     ${imageSection}
     <div class="vendor-card-header">
       <div class="vendor-avatar ${vendor.vendor}" style="background: ${vendorStyle.color}">
@@ -289,6 +339,15 @@ function createVendorCard(vendor) {
     </div>
   `;
   
+<<<<<<< HEAD
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(card, cardContent);
+  } else {
+    card.innerHTML = cardContent;
+  }
+  
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   return card;
 }
 
@@ -325,7 +384,32 @@ function updateMap() {
       title: vendor.title
     });
 
+<<<<<<< HEAD
     marker.addListener('click', () => showVendorModal(vendor));
+=======
+    // Enhanced click listener with visual feedback
+    marker.addListener('click', () => {
+      // Animate click
+      animateMarkerClick(marker);
+      // Center map and show modal
+      map.panTo(marker.getPosition());
+      map.setZoom(Math.max(map.getZoom(), 14));
+      showVendorModal(vendor);
+      
+      // Track interaction
+      trackVendorInteraction(vendor, 'pin_clicked');
+    });
+    
+    // Add hover effects
+    marker.addListener('mouseover', () => {
+      highlightMarker(marker, true);
+    });
+    
+    marker.addListener('mouseout', () => {
+      highlightMarker(marker, false);
+    });
+    
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     marker.vendorData = vendor; // Store vendor data for search functionality
     markers.push(marker);
   });
@@ -333,6 +417,7 @@ function updateMap() {
 
 // Show vendor details modal
 function showVendorModal(vendor) {
+<<<<<<< HEAD
   const modal = document.getElementById('vendor-modal');
   const modalBody = document.getElementById('modal-body');
   
@@ -341,6 +426,32 @@ function showVendorModal(vendor) {
   const stockText = vendor.inStock ? '✓ In Stock' : '⚠ Low Stock';
   
   modalBody.innerHTML = `
+=======
+  if (window.errorHandler) {
+    window.errorHandler.debug('showVendorModal called', vendor);
+  }
+  
+  const modal = document.getElementById('vendor-modal');
+  const modalBody = document.getElementById('modal-body');
+  
+  if (!modal || !modalBody) {
+    if (window.errorHandler) {
+      window.errorHandler.warn('Modal elements not found', { modal: !!modal, modalBody: !!modalBody });
+    }
+    
+    // Create fallback modal if none exists
+    createFallbackModal(vendor);
+    return;
+  }
+  
+  // Get vendor styles dynamically
+  const vendorStyles = getVendorStyles();
+  const vendorStyle = vendorStyles[vendor.vendor] || vendorStyles.other || { color: '#95a5a6', icon: 'O' };
+  const stockStatus = vendor.inStock ? 'in-stock' : 'low-stock';
+  const stockText = vendor.inStock ? '✓ In Stock' : '⚠ Low Stock';
+  
+  const modalContent = `
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     <div class="vendor-card-header">
       <div class="vendor-avatar ${vendor.vendor}" style="background: ${vendorStyle.color}">
         ${vendorStyle.icon}
@@ -367,14 +478,265 @@ function showVendorModal(vendor) {
     </div>
   `;
   
+<<<<<<< HEAD
   modal.classList.add('active');
 }
 
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(modalBody, modalContent);
+  } else {
+    modalBody.innerHTML = modalContent;
+  }
+  
+  modal.classList.add('active');
+  if (window.errorHandler) {
+    window.errorHandler.debug('Modal should now be visible');
+  }
+}
+
+// Create fallback modal if main modal not found
+function createFallbackModal(vendor) {
+  if (window.errorHandler) {
+    window.errorHandler.debug('Creating fallback modal for vendor', vendor);
+  }
+  
+  // Remove existing fallback modal
+  const existingModal = document.getElementById('fallback-vendor-modal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // Get vendor styles
+  const vendorStyles = getVendorStyles();
+  const vendorStyle = vendorStyles[vendor.vendor] || vendorStyles.other || { color: '#95a5a6', icon: 'O' };
+  const stockStatus = vendor.inStock ? 'in-stock' : 'low-stock';
+  const stockText = vendor.inStock ? '✓ In Stock' : '⚠ Low Stock';
+  
+  // Create modal
+  const modal = document.createElement('div');
+  modal.id = 'fallback-vendor-modal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+  `;
+  
+  modal.innerHTML = `
+    <div style="
+      background: white;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: slideIn 0.3s ease;
+    ">
+      <div style="
+        padding: 20px 20px 10px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      ">
+        <h2 style="margin: 0; color: #333;">${vendor.title}</h2>
+        <button onclick="this.closest('#fallback-vendor-modal').remove()" style="
+          background: none;
+          border: none;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 0;
+          color: #666;
+        ">✕</button>
+      </div>
+      <div style="padding: 20px;">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+          <div style="
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: ${vendorStyle.color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 15px;
+          ">${vendorStyle.icon}</div>
+          <div>
+            <h3 style="margin: 0; color: #333;">${vendor.vendorDisplay || vendor.vendor.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</h3>
+            <div style="color: #666; font-size: 14px;">📍 ${vendor.city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+          </div>
+        </div>
+        
+        <div style="margin: 20px 0;">
+          <div style="font-size: 24px; font-weight: bold; color: #2c5aa0; margin-bottom: 10px;">$${vendor.price}</div>
+          ${vendor.description ? `<p style="color: #666; margin: 10px 0;">${vendor.description}</p>` : '<p style="color: #666; margin: 10px 0;">Premium quality product available for delivery.</p>'}
+          
+          <div style="display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap;">
+            <span style="background: #f8f9fa; padding: 5px 10px; border-radius: 20px; font-size: 14px;">⭐ ${vendor.rating ? vendor.rating.toFixed(1) : '4.5'}</span>
+            <span style="background: ${vendor.inStock ? '#d4edda' : '#f8d7da'}; color: ${vendor.inStock ? '#155724' : '#721c24'}; padding: 5px 10px; border-radius: 20px; font-size: 14px;">${stockText}</span>
+            ${vendor.verified ? '<span style="background: #d1ecf1; color: #0c5460; padding: 5px 10px; border-radius: 20px; font-size: 14px;">✓ Verified</span>' : ''}
+          </div>
+        </div>
+        
+        <button onclick="alert('Contact feature coming soon!')" style="
+          width: 100%;
+          padding: 12px;
+          background: #007bff;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: background 0.3s ease;
+        " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+          💬 Message Vendor
+        </button>
+      </div>
+    </div>
+  `;
+  
+  // Add click outside to close
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.remove();
+    }
+  });
+  
+  // Add animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  `;
+  if (!document.querySelector('#fallback-modal-styles')) {
+    style.id = 'fallback-modal-styles';
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(modal);
+  if (window.errorHandler) {
+    window.errorHandler.debug('Fallback modal created and shown');
+  }
+}
+
+// Make showVendorModal globally accessible
+window.showVendorModal = showVendorModal;
+
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 // Contact vendor function
 function contactVendor(vendorId) {
   alert('Messaging feature coming soon! Contact info for vendor: ' + vendorId);
 }
 
+<<<<<<< HEAD
+=======
+// Animate marker click for visual feedback
+function animateMarkerClick(marker) {
+  if (!marker) return;
+  
+  // Store original icon
+  const originalIcon = marker.getIcon();
+  
+  // Create enlarged version for animation
+  const enlargedIcon = {
+    ...originalIcon,
+    scaledSize: new google.maps.Size(40, 40),
+    anchor: new google.maps.Point(20, 20)
+  };
+  
+  // Apply enlarged icon
+  marker.setIcon(enlargedIcon);
+  
+  // Reset after animation
+  setTimeout(() => {
+    marker.setIcon(originalIcon);
+  }, 200);
+}
+
+// Highlight marker on hover
+function highlightMarker(marker, highlight) {
+  if (!marker) return;
+  
+  const originalIcon = marker.getIcon();
+  if (!originalIcon) return;
+  
+  if (highlight) {
+    // Store original if not already stored
+    if (!marker.originalIcon) {
+      marker.originalIcon = originalIcon;
+    }
+    
+    // Create highlighted version
+    const highlightedIcon = {
+      ...originalIcon,
+      scaledSize: new google.maps.Size(36, 36),
+      anchor: new google.maps.Point(18, 18)
+    };
+    
+    marker.setIcon(highlightedIcon);
+    marker.setZIndex(1000);
+  } else {
+    // Restore original
+    if (marker.originalIcon) {
+      marker.setIcon(marker.originalIcon);
+      marker.setZIndex(100);
+    }
+  }
+}
+
+// Track vendor interactions for analytics
+function trackVendorInteraction(vendor, action) {
+  try {
+    // Log interaction
+    if (window.errorHandler) {
+      window.errorHandler.debug(`Vendor interaction: ${action} on ${vendor.title} (${vendor.id})`);
+    }
+    
+    // Could integrate with analytics service here
+    if (window.gtag) {
+      window.gtag('event', 'vendor_interaction', {
+        'event_category': 'map',
+        'event_label': vendor.title,
+        'vendor_id': vendor.id,
+        'action': action
+      });
+    }
+    
+    // Fire custom event for other components
+    window.dispatchEvent(new CustomEvent('vendorInteraction', {
+      detail: { vendor, action, timestamp: Date.now() }
+    }));
+    
+  } catch (error) {
+    if (window.errorHandler) {
+      window.errorHandler.handleError(error, 'Vendor Interaction Tracking');
+    } else {
+      console.warn('Error tracking vendor interaction:', error);
+    }
+  }
+}
+
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 // Add user location marker to map
 function addUserLocationMarker() {
   if (window.locationManager.userLocation && map) {
@@ -405,7 +767,13 @@ function setupEnhancedSearch() {
   const searchAreaContainer = document.getElementById('search-area-container');
   
   if (!searchInput || !searchDropdown || !searchResults) {
+<<<<<<< HEAD
     console.warn('Search elements not found');
+=======
+    if (window.errorHandler) {
+      window.errorHandler.warn('Search elements not found');
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     return;
   }
   
@@ -509,7 +877,16 @@ function displaySearchResults(results, query) {
   if (!searchResults) return;
   
   if (results.length === 0) {
+<<<<<<< HEAD
     searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+=======
+    const noResultsHTML = '<div class="search-no-results">No results found</div>';
+    if (window.domUtils) {
+      window.domUtils.setHTML(searchResults, noResultsHTML);
+    } else {
+      searchResults.innerHTML = noResultsHTML;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     showSearchDropdown();
     return;
   }
@@ -529,7 +906,15 @@ function displaySearchResults(results, query) {
     `;
   }).join('');
   
+<<<<<<< HEAD
   searchResults.innerHTML = resultHtml;
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(searchResults, resultHtml);
+  } else {
+    searchResults.innerHTML = resultHtml;
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   
   // Add click listeners
   searchResults.querySelectorAll('.search-result-item').forEach((item, index) => {
@@ -794,10 +1179,26 @@ function setupEventListeners() {
 // Display filtered vendors (for search)
 function displayFilteredVendors(vendors) {
   const vendorCards = document.getElementById('vendor-cards');
+<<<<<<< HEAD
   vendorCards.innerHTML = '';
   
   if (vendors.length === 0) {
     vendorCards.innerHTML = '<div class="loading">No vendors found</div>';
+=======
+  if (window.domUtils) {
+    window.domUtils.setHTML(vendorCards, '');
+  } else {
+    vendorCards.innerHTML = '';
+  }
+  
+  if (vendors.length === 0) {
+    const noVendorsHTML = '<div class="loading">No vendors found</div>';
+    if (window.domUtils) {
+      window.domUtils.setHTML(vendorCards, noVendorsHTML);
+    } else {
+      vendorCards.innerHTML = noVendorsHTML;
+    }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     return;
   }
   
@@ -829,7 +1230,29 @@ function displayFilteredVendors(vendors) {
       }
     });
 
+<<<<<<< HEAD
     marker.addListener('click', () => showVendorModal(vendor));
+=======
+    // Enhanced click listener with visual feedback  
+    marker.addListener('click', () => {
+      animateMarkerClick(marker);
+      map.panTo(marker.getPosition());
+      map.setZoom(Math.max(map.getZoom(), 14));
+      showVendorModal(vendor);
+      trackVendorInteraction(vendor, 'search_pin_clicked');
+    });
+    
+    // Add hover effects
+    marker.addListener('mouseover', () => {
+      highlightMarker(marker, true);
+    });
+    
+    marker.addListener('mouseout', () => {
+      highlightMarker(marker, false);
+    });
+    
+    marker.vendorData = vendor; // Store vendor data
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
     markers.push(marker);
   });
 }
@@ -837,7 +1260,16 @@ function displayFilteredVendors(vendors) {
 // Show error message
 function showError(message) {
   const vendorCards = document.getElementById('vendor-cards');
+<<<<<<< HEAD
   vendorCards.innerHTML = `<div class="loading" style="color: #dc3545;">${message}</div>`;
+=======
+  const errorHTML = `<div class="loading" style="color: #dc3545;">${message}</div>`;
+  if (window.domUtils) {
+    window.domUtils.setHTML(vendorCards, errorHTML);
+  } else {
+    vendorCards.innerHTML = errorHTML;
+  }
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 }
 
 

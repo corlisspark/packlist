@@ -103,6 +103,15 @@
                 <span class="nav-text">Audit Logs</span>
               </a>
             </li>
+<<<<<<< HEAD
+=======
+            <li class="nav-item">
+              <a href="#developer-tools" class="nav-link" data-section="developer-tools">
+                <span class="nav-icon">🛠️</span>
+                <span class="nav-text">Developer Tools</span>
+              </a>
+            </li>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
           </ul>
 
         </div>
@@ -255,6 +264,7 @@
             </div>
           </div>
 
+<<<<<<< HEAD
           <!-- Analytics Charts -->
           <div class="analytics-grid">
             <div class="chart-card">
@@ -279,6 +289,126 @@
               <h3>Popular Categories</h3>
               <div id="categories-chart" class="chart-container">
                 <div class="chart-placeholder">📈 Chart coming soon</div>
+=======
+          <!-- User Behavior Analytics -->
+          <div class="behavior-stats-grid">
+            <div class="stat-card highlight">
+              <div class="stat-icon">🎯</div>
+              <div class="stat-content">
+                <div class="stat-number" id="total-pin-clicks">0</div>
+                <div class="stat-label">Pin Clicks Today</div>
+                <div class="stat-change" id="pin-clicks-change">+0%</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">👁️</div>
+              <div class="stat-content">
+                <div class="stat-number" id="modal-views">0</div>
+                <div class="stat-label">Modal Views</div>
+                <div class="stat-change" id="modal-views-change">+0%</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">⚡</div>
+              <div class="stat-content">
+                <div class="stat-number" id="avg-session-time">0s</div>
+                <div class="stat-label">Avg Session</div>
+                <div class="stat-change" id="session-time-change">+0%</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📱</div>
+              <div class="stat-content">
+                <div class="stat-number" id="mobile-usage">0%</div>
+                <div class="stat-label">Mobile Users</div>
+                <div class="stat-change" id="mobile-usage-change">+0%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pin Interaction Analytics -->
+          <div class="analytics-grid">
+            <div class="chart-card">
+              <h3>🎯 Pin Interactions</h3>
+              <div class="chart-controls">
+                <button class="chart-btn active" data-metric="clicks">Clicks</button>
+                <button class="chart-btn" data-metric="hovers">Hovers</button>
+                <button class="chart-btn" data-metric="conversions">Conversions</button>
+              </div>
+              <div id="pin-interactions-chart" class="chart-container">
+                <canvas id="pin-interactions-canvas" width="400" height="200"></canvas>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>🗺️ Hotspot Analysis</h3>
+              <div id="hotspot-chart" class="chart-container">
+                <div class="hotspot-list" id="hotspot-list">
+                  <div class="loading">Loading hotspot data...</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>📊 Popular Listings</h3>
+              <div id="popular-listings-chart" class="chart-container">
+                <div class="popular-listings" id="popular-listings">
+                  <div class="loading">Loading popular listings...</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-card">
+              <h3>⏱️ User Journey</h3>
+              <div id="user-journey-chart" class="chart-container">
+                <div class="journey-flow" id="journey-flow">
+                  <div class="journey-step">
+                    <div class="step-number">1</div>
+                    <div class="step-name">Map Load</div>
+                    <div class="step-count" id="step-load">0</div>
+                  </div>
+                  <div class="journey-arrow">→</div>
+                  <div class="journey-step">
+                    <div class="step-number">2</div>
+                    <div class="step-name">Pin Hover</div>
+                    <div class="step-count" id="step-hover">0</div>
+                  </div>
+                  <div class="journey-arrow">→</div>
+                  <div class="journey-step">
+                    <div class="step-number">3</div>
+                    <div class="step-name">Pin Click</div>
+                    <div class="step-count" id="step-click">0</div>
+                  </div>
+                  <div class="journey-arrow">→</div>
+                  <div class="journey-step">
+                    <div class="step-number">4</div>
+                    <div class="step-name">Contact</div>
+                    <div class="step-count" id="step-contact">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-time Activity Feed -->
+          <div class="chart-card full-width">
+            <h3>🔴 Real-time Activity</h3>
+            <div class="activity-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="auto-refresh-toggle" checked>
+                <span class="toggle-slider"></span>
+                Auto-refresh
+              </label>
+              <button class="btn btn-sm" onclick="clearActivityFeed()">Clear</button>
+            </div>
+            <div id="activity-feed" class="activity-feed">
+              <div class="activity-item welcome">
+                <div class="activity-icon">🚀</div>
+                <div class="activity-content">
+                  <div class="activity-text">Behavior analytics initialized</div>
+                  <div class="activity-time">Just now</div>
+                </div>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
               </div>
             </div>
           </div>
@@ -302,6 +432,53 @@
               <div class="loading">Loading vendors...</div>
             </div>
           </div>
+<<<<<<< HEAD
+=======
+
+          <!-- Vendor Management Modal -->
+          <div id="vendor-modal" class="admin-modal">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 id="vendor-modal-title">Add Vendor</h3>
+                <button class="close-btn" onclick="adminManager.closeVendorModal()">✕</button>
+              </div>
+              <div class="modal-body">
+                <form id="vendor-form">
+                  <div class="form-group">
+                    <label for="vendor-name">Vendor Name *</label>
+                    <input type="text" id="vendor-name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="vendor-color">Brand Color *</label>
+                    <input type="color" id="vendor-color" value="#8e44ad" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="vendor-icon">Icon (single character) *</label>
+                    <input type="text" id="vendor-icon" maxlength="1" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="vendor-description">Description</label>
+                    <textarea id="vendor-description" rows="3"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="vendor-priority">Priority (lower = higher priority)</label>
+                    <input type="number" id="vendor-priority" min="1" value="1">
+                  </div>
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="vendor-active" checked>
+                      <span>Active (visible to users)</span>
+                    </label>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-outline" onclick="adminManager.closeVendorModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="adminManager.saveVendor()">Save Vendor</button>
+              </div>
+            </div>
+          </div>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         </section>
 
         <!-- Locations Management Section -->
@@ -321,6 +498,64 @@
               <div class="loading">Loading locations...</div>
             </div>
           </div>
+<<<<<<< HEAD
+=======
+
+          <!-- Location Management Modal -->
+          <div id="location-modal" class="admin-modal">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 id="location-modal-title">Add Location</h3>
+                <button class="close-btn" onclick="adminManager.closeLocationModal()">✕</button>
+              </div>
+              <div class="modal-body">
+                <form id="location-form">
+                  <div class="form-group">
+                    <label for="location-name">Location Name *</label>
+                    <input type="text" id="location-name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="location-lat">Latitude *</label>
+                    <input type="number" id="location-lat" step="0.000001" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="location-lng">Longitude *</label>
+                    <input type="number" id="location-lng" step="0.000001" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="location-timezone">Timezone</label>
+                    <select id="location-timezone">
+                      <option value="America/New_York">Eastern Time</option>
+                      <option value="America/Chicago">Central Time</option>
+                      <option value="America/Denver">Mountain Time</option>
+                      <option value="America/Los_Angeles">Pacific Time</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="location-priority">Priority (lower = higher priority)</label>
+                    <input type="number" id="location-priority" min="1" value="1">
+                  </div>
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="location-active" checked>
+                      <span>Active (available for selection)</span>
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="location-default">
+                      <span>Default location (fallback)</span>
+                    </label>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-outline" onclick="adminManager.closeLocationModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="adminManager.saveLocation()">Save Location</button>
+              </div>
+            </div>
+          </div>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
         </section>
 
         <!-- Configuration Section -->
@@ -340,6 +575,10 @@
           <!-- Configuration Tabs -->
           <div class="config-tabs">
             <button class="tab-btn active" data-tab="general">General</button>
+<<<<<<< HEAD
+=======
+            <button class="tab-btn" data-tab="search">🔍 Search</button>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
             <button class="tab-btn" data-tab="security">Security</button>
             <button class="tab-btn" data-tab="features">Features</button>
             <button class="tab-btn" data-tab="appearance">Appearance</button>
@@ -377,12 +616,381 @@
 
         </section>
 
+<<<<<<< HEAD
+=======
+        <!-- Developer Tools Section -->
+        <section id="developer-tools-section" class="admin-section">
+          <div class="section-header">
+            <h1>Developer Tools</h1>
+            <div class="section-actions">
+              <button class="btn btn-outline" onclick="developerTools.clearAllTestData()">
+                🗑️ Clear Test Data
+              </button>
+              <button class="btn btn-primary" onclick="developerTools.runAllTests()">
+                🧪 Run All Tests
+              </button>
+            </div>
+          </div>
+
+          <!-- Developer Tools Tabs -->
+          <div class="dev-tools-tabs">
+            <button class="tab-btn active" data-tab="auth-testing">🔐 Auth Testing</button>
+            <button class="tab-btn" data-tab="firebase-testing">🔥 Firebase Testing</button>
+            <button class="tab-btn" data-tab="email-testing">📧 Email Testing</button>
+            <button class="tab-btn" data-tab="pin-testing">📍 Pin Testing</button>
+            <button class="tab-btn" data-tab="notification-testing">🔔 Notification Testing</button>
+            <button class="tab-btn" data-tab="header-testing">🎨 Header Testing</button>
+            <button class="tab-btn" data-tab="system-debug">🔍 System Debug</button>
+          </div>
+
+          <!-- Auth Testing Tab -->
+          <div id="auth-testing-tab" class="dev-tool-tab active">
+            <div class="tool-section">
+              <h3>🔐 Authentication Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Firebase Auth Status</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.checkAuthStatus()">Check Status</button>
+                    <button class="btn btn-sm" onclick="developerTools.testAuthFlow()">Test Flow</button>
+                  </div>
+                  <div id="auth-status-result" class="test-result">
+                    <div class="status-indicator unknown">Status: Unknown</div>
+                  </div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Simple Auth Test</h4>
+                  <div class="test-controls">
+                    <input type="email" id="test-email" placeholder="Test email" value="test@example.com">
+                    <input type="password" id="test-password" placeholder="Test password" value="testpass123">
+                    <button class="btn btn-sm" onclick="developerTools.testSignUp()">Test Sign Up</button>
+                    <button class="btn btn-sm" onclick="developerTools.testSignIn()">Test Sign In</button>
+                  </div>
+                  <div id="simple-auth-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Admin Access Test</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testAdminAccess()">Test Admin Access</button>
+                    <button class="btn btn-sm" onclick="developerTools.checkUserRole()">Check Current Role</button>
+                  </div>
+                  <div id="admin-access-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Auth State Listener</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.startAuthListener()">Start Listener</button>
+                    <button class="btn btn-sm" onclick="developerTools.stopAuthListener()">Stop Listener</button>
+                  </div>
+                  <div id="auth-listener-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Firebase Testing Tab -->
+          <div id="firebase-testing-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>🔥 Firebase Connectivity Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Connection Status</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testFirebaseConnection()">Test Connection</button>
+                    <button class="btn btn-sm" onclick="developerTools.checkFirebaseConfig()">Check Config</button>
+                  </div>
+                  <div id="firebase-connection-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Firestore Operations</h4>
+                  <div class="test-controls">
+                    <input type="text" id="test-collection" placeholder="Collection name" value="test">
+                    <button class="btn btn-sm" onclick="developerTools.testFirestoreWrite()">Test Write</button>
+                    <button class="btn btn-sm" onclick="developerTools.testFirestoreRead()">Test Read</button>
+                    <button class="btn btn-sm" onclick="developerTools.testFirestoreQuery()">Test Query</button>
+                  </div>
+                  <div id="firestore-ops-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Real-time Listeners</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testRealtimeListener()">Start Listener</button>
+                    <button class="btn btn-sm" onclick="developerTools.stopRealtimeListener()">Stop Listener</button>
+                  </div>
+                  <div id="realtime-listener-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Security Rules Test</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testSecurityRules()">Test Rules</button>
+                    <button class="btn btn-sm" onclick="developerTools.testPermissions()">Test Permissions</button>
+                  </div>
+                  <div id="security-rules-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Email Testing Tab -->
+          <div id="email-testing-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>📧 Email System Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>SMTP Configuration</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.checkEmailConfig()">Check Config</button>
+                    <button class="btn btn-sm" onclick="developerTools.testSMTPConnection()">Test SMTP</button>
+                  </div>
+                  <div id="smtp-config-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Send Test Email</h4>
+                  <div class="test-controls">
+                    <input type="email" id="test-email-recipient" placeholder="Recipient email">
+                    <input type="text" id="test-email-subject" placeholder="Subject" value="Test Email">
+                    <textarea id="test-email-body" placeholder="Email body" rows="3">This is a test email from PacksList admin panel.</textarea>
+                    <button class="btn btn-sm" onclick="developerTools.sendTestEmail()">Send Test</button>
+                  </div>
+                  <div id="test-email-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Email Templates</h4>
+                  <div class="test-controls">
+                    <select id="email-template-selector">
+                      <option value="welcome">Welcome Email</option>
+                      <option value="pack-approved">Pack Approved</option>
+                      <option value="pack-rejected">Pack Rejected</option>
+                      <option value="notification">Notification</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="developerTools.previewEmailTemplate()">Preview</button>
+                    <button class="btn btn-sm" onclick="developerTools.testEmailTemplate()">Test Send</button>
+                  </div>
+                  <div id="email-template-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pin Testing Tab -->
+          <div id="pin-testing-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>📍 Pin Interaction Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Pin Click Simulation</h4>
+                  <div class="test-controls">
+                    <select id="test-vendor-selector">
+                      <option value="bozo-headstash">Bozo Headstash</option>
+                      <option value="gumbo">Gumbo</option>
+                      <option value="deep-fried">Deep Fried</option>
+                      <option value="high-tolerance">High Tolerance</option>
+                    </select>
+                    <button class="btn btn-sm" onclick="developerTools.simulatePinClick()">Simulate Click</button>
+                    <button class="btn btn-sm" onclick="developerTools.simulatePinHover()">Simulate Hover</button>
+                  </div>
+                  <div id="pin-simulation-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Modal Integration</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testModalDisplay()">Test Modal</button>
+                    <button class="btn btn-sm" onclick="developerTools.testModalAnimations()">Test Animations</button>
+                    <button class="btn btn-sm" onclick="developerTools.testModalClose()">Test Close</button>
+                  </div>
+                  <div id="modal-integration-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Analytics Tracking</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testAnalyticsTracking()">Test Tracking</button>
+                    <button class="btn btn-sm" onclick="developerTools.viewInteractionData()">View Data</button>
+                    <button class="btn btn-sm" onclick="developerTools.clearInteractionData()">Clear Data</button>
+                  </div>
+                  <div id="analytics-tracking-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Testing Tab -->
+          <div id="notification-testing-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>🔔 Notification System Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Toast Notifications</h4>
+                  <div class="test-controls">
+                    <select id="toast-type-selector">
+                      <option value="success">Success</option>
+                      <option value="warning">Warning</option>
+                      <option value="error">Error</option>
+                      <option value="info">Info</option>
+                    </select>
+                    <input type="text" id="toast-message" placeholder="Toast message" value="Test notification">
+                    <button class="btn btn-sm" onclick="developerTools.testToastNotification()">Show Toast</button>
+                  </div>
+                  <div id="toast-test-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Notification Timing</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testNotificationTiming()">Test 2s Timer</button>
+                    <button class="btn btn-sm" onclick="developerTools.testCloseButton()">Test Close Button</button>
+                    <button class="btn btn-sm" onclick="developerTools.testMultipleToasts()">Test Multiple</button>
+                  </div>
+                  <div id="notification-timing-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Pack Status Notifications</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testPackApproved()">Pack Approved</button>
+                    <button class="btn btn-sm" onclick="developerTools.testPackRejected()">Pack Rejected</button>
+                    <button class="btn btn-sm" onclick="developerTools.testPackFlagged()">Pack Flagged</button>
+                  </div>
+                  <div id="pack-notifications-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Header Testing Tab -->
+          <div id="header-testing-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>🎨 Header System Testing</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Header Manager</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.testHeaderManager()">Test Manager</button>
+                    <button class="btn btn-sm" onclick="developerTools.testHeaderRefresh()">Test Refresh</button>
+                    <button class="btn btn-sm" onclick="developerTools.testHeaderConfig()">Test Config</button>
+                  </div>
+                  <div id="header-manager-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Dynamic Updates</h4>
+                  <div class="test-controls">
+                    <input type="text" id="test-location-text" placeholder="Location text" value="Test Location">
+                    <button class="btn btn-sm" onclick="developerTools.testLocationUpdate()">Update Location</button>
+                    <button class="btn btn-sm" onclick="developerTools.testAuthUpdate()">Update Auth State</button>
+                  </div>
+                  <div id="dynamic-updates-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Header Showcase</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.showHeaderDemo()">Show Demo</button>
+                    <button class="btn btn-sm" onclick="developerTools.testHoverEffects()">Test Hover</button>
+                    <button class="btn btn-sm" onclick="developerTools.testAnimations()">Test Animations</button>
+                  </div>
+                  <div id="header-showcase-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Debug Tab -->
+          <div id="system-debug-tab" class="dev-tool-tab">
+            <div class="tool-section">
+              <h3>🔍 System Debug & Monitoring</h3>
+              <div class="test-grid">
+                <div class="test-card">
+                  <h4>Admin Status</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.checkAdminStatus()">Check Status</button>
+                    <button class="btn btn-sm" onclick="developerTools.debugAdminAuth()">Debug Auth</button>
+                    <button class="btn btn-sm" onclick="developerTools.viewSystemInfo()">System Info</button>
+                  </div>
+                  <div id="admin-status-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Console Logs</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.enableDebugLogs()">Enable Debug</button>
+                    <button class="btn btn-sm" onclick="developerTools.exportLogs()">Export Logs</button>
+                    <button class="btn btn-sm" onclick="developerTools.clearLogs()">Clear Logs</button>
+                  </div>
+                  <div id="console-logs-result" class="test-result">
+                    <div id="debug-console" class="debug-console"></div>
+                  </div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Performance Testing</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.runPerformanceTest()">Run Test</button>
+                    <button class="btn btn-sm" onclick="developerTools.testMemoryUsage()">Memory Test</button>
+                    <button class="btn btn-sm" onclick="developerTools.testLoadTimes()">Load Times</button>
+                  </div>
+                  <div id="performance-test-result" class="test-result"></div>
+                </div>
+
+                <div class="test-card">
+                  <h4>Error Simulation</h4>
+                  <div class="test-controls">
+                    <button class="btn btn-sm" onclick="developerTools.simulateNetworkError()">Network Error</button>
+                    <button class="btn btn-sm" onclick="developerTools.simulateAuthError()">Auth Error</button>
+                    <button class="btn btn-sm" onclick="developerTools.simulateFirebaseError()">Firebase Error</button>
+                  </div>
+                  <div id="error-simulation-result" class="test-result"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Results Summary -->
+          <div class="test-summary">
+            <h3>🧪 Test Results Summary</h3>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">Tests Run</div>
+                <div class="summary-value" id="tests-run-count">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Passed</div>
+                <div class="summary-value success" id="tests-passed-count">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Failed</div>
+                <div class="summary-value error" id="tests-failed-count">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Coverage</div>
+                <div class="summary-value" id="test-coverage">0%</div>
+              </div>
+            </div>
+            <div class="summary-actions">
+              <button class="btn btn-outline" onclick="developerTools.exportTestResults()">Export Results</button>
+              <button class="btn btn-primary" onclick="developerTools.generateTestReport()">Generate Report</button>
+            </div>
+          </div>
+
+        </section>
+
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
       </main>
 
     </div>
 
   </div>
 
+<<<<<<< HEAD
   <!-- Admin Action Modals -->
   <div id="admin-modals">
     <!-- Vendor Management Modal -->
@@ -485,6 +1093,8 @@
     </div>
   </div>
 
+=======
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
   <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -499,6 +1109,14 @@
   <script src="admin-manager.js"></script>
   <script src="pack-moderation.js"></script>
   <script src="user-management.js"></script>
+<<<<<<< HEAD
   <script src="audit-logger.js"></script>
+=======
+  <script src="behavior-analytics.js"></script>
+  <script src="audit-logger.js"></script>
+  <script src="../notifications/notification-manager.js"></script>
+  <script src="../header-manager.js"></script>
+  <script src="developer-tools.js"></script>
+>>>>>>> 605a9f9d3e0805a86b49156b380e7edc94f5f91c
 </body>
 </html>
