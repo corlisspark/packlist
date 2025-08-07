@@ -1,19 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>View Pack</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>View Post</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    #post { padding-top: 20px; }
+    #nav {
+      text-align: center;
+      padding: 10px 0;
+      background-color: #f3f3f3;
+      margin-bottom: 20px;
+    }
+    #nav a {
+      text-decoration: none;
+      margin: 0 15px;
+      color: #333;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div id="container">
-    <div id="main">
-      <div id="post"></div>
-      <div id="map" style="height: 300px; width: 100%; border-radius: 12px;"></div>
-    </div>
-  </div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDz6LLkJ-eNIfB-fdLzvjp6UUXEHtTsnUM&libraries=places"></script>
-  <script type="module" src="view.js"></script>
+<div id="nav">
+  <a href="/index.html">Home</a>
+  <a href="/new.html">Post</a>
+  <a href="/account.html">Account</a>
+</div>
+
+<div id="post">
+  <h1>Loading post...</h1>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWkbZRee5HZHTRKucfH-6rXezkgmMy29k",
+    authDomain: "cw55hf8nvt.firebaseapp.com",
+    projectId: "cw55hf8nvt"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const params = new URLSearchParams(window.location.search);
+  const postId = params.get("id");
+  const postDiv = document.getElementById("post");
+
+  if (!postId) {
+    postDiv.innerHTML = "<h2>Invalid or missing post ID.</h2>";
+  } else {
+    db.collection("posts").doc(postId).get()
+      .then(doc => {
+        if (!doc.exists) {
+          postDiv.innerHTML = "<h2>Post not found.</h2>";
+          return;
+        }
+        const data = doc.data();
+        if (!data || !data.title || !data.price || !data.city) {
+          postDiv.innerHTML = "<h2>Incomplete post data.</h2>";
+          return;
+        }
+        postDiv.innerHTML = `
+          <h2>${data.title}</h2>
+          <p><strong>Price:</strong> $${data.price}</p>
+          <p><strong>Vendor:</strong> ${data.vendor || "N/A"}</p>
+          <p><strong>Location:</strong> ${data.city}</p>
+          <p><strong>Description:</strong><br>${data.description || "No description."}</p>
+        `;
+      })
+      .catch(err => {
+        console.error("Error fetching post:", err);
+        postDiv.innerHTML = "<h2>Error loading post data.</h2>";
+      });
+  }
+</script>
 </body>
 </html>

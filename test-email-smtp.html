@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Email SMTP - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    input { padding: 8px; margin: 5px; width: 200px; }
+    #console { background: #2c3e50; color: white; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: auto; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Email SMTP Debugging</h1>
+  
+  <div class="test-section info">
+    <h3>Current SMTP Status</h3>
+    <p>This will test if your Gmail SMTP configuration is working with Firebase.</p>
+  </div>
+  
+  <div class="test-section">
+    <h3>Test 1: Create Test Account & Send Verification</h3>
+    <input type="email" id="test-email" placeholder="test@example.com" value="test.packslist@gmail.com">
+    <input type="password" id="test-password" placeholder="password123" value="password123">
+    <button onclick="createTestAccount()">Create Account & Send Verification</button>
+  </div>
+  
+  <div class="test-section">
+    <h3>Test 2: Direct Email Verification Test</h3>
+    <input type="email" id="signin-email" placeholder="Enter existing email">
+    <input type="password" id="signin-password" placeholder="Enter password">
+    <button onclick="signInAndSendVerification()">Sign In & Send Verification</button>
+  </div>
+  
+  <div class="test-section">
+    <h3>Test 3: Check SMTP Connection</h3>
+    <button onclick="checkFirebaseConfig()">Check Firebase Configuration</button>
+    <button onclick="testSMTPConnection()">Test SMTP Settings</button>
+  </div>
+  
+  <div id="results"></div>
+  <div id="console"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  
+  <!-- PacksList Scripts -->
+  <script src="config-manager.js"></script>
+  <script src="auth/auth-manager.js"></script>
+
+  <script>
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    function addToConsole(type, ...args) {
+      const consoleDiv = document.getElementById('console');
+      const timestamp = new Date().toLocaleTimeString();
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      
+      const logEntry = document.createElement('div');
+      logEntry.style.marginBottom = '5px';
+      logEntry.style.color = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#ecf0f1';
+      logEntry.innerHTML = `<span style="color: #95a5a6;">[${timestamp}]</span> <span style="color: #3498db;">${type.toUpperCase()}:</span> ${message}`;
+      
+      consoleDiv.appendChild(logEntry);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+    
+    console.log = function(...args) { originalLog.apply(console, args); addToConsole('log', ...args); };
+    console.error = function(...args) { originalError.apply(console, args); addToConsole('error', ...args); };
+    console.warn = function(...args) { originalWarn.apply(console, args); addToConsole('warn', ...args); };
+    
+    function addResult(message, type = 'info') {
+      const resultsDiv = document.getElementById('results');
+      const resultDiv = document.createElement('div');
+      resultDiv.className = `test-section ${type}`;
+      resultDiv.innerHTML = message;
+      resultsDiv.appendChild(resultDiv);
+    }
+    
+    async function createTestAccount() {
+      const email = document.getElementById('test-email').value;
+      const password = document.getElementById('test-password').value;
+      
+      if (!email || !password) {
+        addResult('Please enter test email and password', 'error');
+        return;
+      }
+      
+      console.log('🧪 Creating test account:', email);
+      
+      try {
+        // First, try to delete account if it exists
+        try {
+          await firebase.auth().signInWithEmailAndPassword(email, password);
+          const user = firebase.auth().currentUser;
+          if (user) {
+            await user.delete();
+            console.log('🗑️ Deleted existing test account');
+          }
+        } catch (e) {
+          console.log('ℹ️ No existing account to delete');
+        }
+        
+        // Create new account
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        console.log('✅ Test account created successfully');
+        console.log('  - UID:', user.uid);
+        console.log('  - Email:', user.email);
+        console.log('  - Email verified:', user.emailVerified);
+        
+        // Send verification email
+        console.log('📧 Sending verification email...');
+        await user.sendEmailVerification();
+        
+        console.log('✅ Verification email sent successfully!');
+        addResult(`✅ Test account created and verification email sent to: ${email}`, 'success');
+        addResult('📧 Check your email inbox (and spam folder) for the verification email', 'info');
+        
+      } catch (error) {
+        console.error('❌ Error creating test account:', error);
+        addResult(`❌ Error: ${error.code} - ${error.message}`, 'error');
+        
+        if (error.code === 'auth/email-already-in-use') {
+          addResult('Try a different email address or use the "Sign In & Send Verification" option instead', 'info');
+        }
+      }
+    }
+    
+    async function signInAndSendVerification() {
+      const email = document.getElementById('signin-email').value;
+      const password = document.getElementById('signin-password').value;
+      
+      if (!email || !password) {
+        addResult('Please enter email and password', 'error');
+        return;
+      }
+      
+      console.log('🔑 Signing in to send verification:', email);
+      
+      try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        console.log('✅ Sign in successful');
+        console.log('  - Email verified:', user.emailVerified);
+        
+        if (user.emailVerified) {
+          addResult('✅ Email is already verified!', 'success');
+          return;
+        }
+        
+        console.log('📧 Sending verification email...');
+        await user.sendEmailVerification();
+        
+        console.log('✅ Verification email sent successfully!');
+        addResult(`✅ Verification email sent to: ${email}`, 'success');
+        
+      } catch (error) {
+        console.error('❌ Error:', error);
+        addResult(`❌ Error: ${error.code} - ${error.message}`, 'error');
+      }
+    }
+    
+    function checkFirebaseConfig() {
+      console.log('🔍 Checking Firebase configuration...');
+      
+      const config = {
+        'Firebase loaded': typeof firebase !== 'undefined',
+        'Firebase initialized': typeof firebase !== 'undefined' && firebase.apps.length > 0,
+        'Auth available': typeof firebase !== 'undefined' && !!firebase.auth,
+        'Auth domain': firebase.apps.length > 0 ? firebase.app().options.authDomain : 'Not available',
+        'Project ID': firebase.apps.length > 0 ? firebase.app().options.projectId : 'Not available',
+        'Current domain': window.location.hostname,
+        'Protocol': window.location.protocol
+      };
+      
+      let configHtml = '<h4>Firebase Configuration:</h4>';
+      Object.entries(config).forEach(([key, value]) => {
+        configHtml += `<div><strong>${key}:</strong> ${value}</div>`;
+      });
+      
+      addResult(configHtml, 'info');
+      
+      // Log to console too
+      console.log('Firebase Configuration:', config);
+    }
+    
+    function testSMTPConnection() {
+      console.log('📧 Testing SMTP connection...');
+      
+      addResult(`
+        <h4>SMTP Configuration Check:</h4>
+        <div><strong>Expected SMTP Settings:</strong></div>
+        <div>• Server: smtp.gmail.com</div>
+        <div>• Port: 587</div>
+        <div>• Security: TLS</div>
+        <div>• Username: Your Gmail address</div>
+        <div>• Password: App password (not regular password)</div>
+        <br>
+        <div><strong>To verify SMTP is working:</strong></div>
+        <div>1. Check Firebase Console → Authentication → Templates</div>
+        <div>2. Verify SMTP settings are saved</div>
+        <div>3. Look for any error indicators</div>
+        <div>4. Try creating a test account above</div>
+      `, 'info');
+      
+      // Additional check
+      if (window.location.protocol !== 'https:') {
+        addResult('⚠️ Warning: Email verification may not work over HTTP. Try using HTTPS.', 'error');
+      }
+      
+      if (window.location.hostname === 'localhost') {
+        addResult('⚠️ Warning: Running on localhost. Firebase Auth emails work best from authorized domains.', 'error');
+      }
+    }
+    
+    // Initialize
+    setTimeout(() => {
+      console.log('🔥 Firebase Email SMTP Test Ready');
+      addResult('Ready to test email verification. Try creating a test account first.', 'success');
+    }, 1000);
+  </script>
+</body>
+</html>

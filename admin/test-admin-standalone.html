@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Standalone Admin Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .success { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .error { background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    .info { background: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    pre { background: #f8f9fa; padding: 10px; border-radius: 3px; font-size: 12px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Standalone Admin Access Test</h1>
+  
+  <div class="info">
+    <h3>Testing Admin Access Without Full Admin Panel</h3>
+    <p>This will test admin access using only the core auth components.</p>
+  </div>
+
+  <div id="status"></div>
+  
+  <button onclick="runStandaloneTest()">Run Standalone Admin Test</button>
+  <button onclick="testDirectAccess()">Test Direct Auth Manager Access</button>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="../firebase-config.js"></script>
+  <script src="../auth/auth-manager.js"></script>
+
+  <script>
+    function addStatus(content, type = 'info') {
+      const status = document.getElementById('status');
+      const div = document.createElement('div');
+      div.className = type;
+      div.innerHTML = content;
+      status.appendChild(div);
+    }
+
+    function runStandaloneTest() {
+      addStatus('<h3>🔍 Running Standalone Admin Test</h3>');
+      
+      // Wait for auth manager to be ready
+      function waitAndTest() {
+        if (!window.authManager || !window.authManager.isInitialized) {
+          addStatus('⏳ Waiting for auth manager to initialize...', 'info');
+          setTimeout(waitAndTest, 500);
+          return;
+        }
+
+        const user = window.authManager.currentUser;
+        const profile = window.authManager.currentUserProfile;
+
+        if (!user) {
+          addStatus('❌ No user signed in. Please sign in first.', 'error');
+          return;
+        }
+
+        addStatus(`📧 User: ${user.email}`, 'info');
+        addStatus(`👤 Profile Role: ${profile?.role || 'No profile'}`, 'info');
+        addStatus(`🔑 Is Admin: ${window.authManager.isAdmin}`, 'info');
+
+        // Test requireAdmin directly
+        console.log('=== Testing requireAdmin() directly ===');
+        try {
+          const adminResult = window.authManager.requireAdmin();
+          if (adminResult) {
+            addStatus('✅ SUCCESS: requireAdmin() returned TRUE', 'success');
+            addStatus('<h4>🎉 Admin access should work!</h4>', 'success');
+            
+            // Try to create a simple admin function
+            testAdminFunction();
+          } else {
+            addStatus('❌ FAILED: requireAdmin() returned FALSE', 'error');
+          }
+        } catch (error) {
+          addStatus(`❌ ERROR: ${error.message}`, 'error');
+        }
+      }
+
+      waitAndTest();
+    }
+
+    function testAdminFunction() {
+      addStatus('<h4>🔧 Testing Admin Function</h4>', 'info');
+      
+      // Simple admin function test
+      if (window.authManager.requireAdmin()) {
+        addStatus('✅ Admin function test PASSED', 'success');
+        addStatus('<p><strong>CONCLUSION: Admin access is working correctly!</strong></p>', 'success');
+        addStatus('<p>The issue must be with the admin panel initialization, not the auth system.</p>', 'info');
+      } else {
+        addStatus('❌ Admin function test FAILED', 'error');
+      }
+    }
+
+    function testDirectAccess() {
+      addStatus('<h3>🔬 Testing Direct Auth Manager Properties</h3>');
+      
+      if (!window.authManager) {
+        addStatus('❌ AuthManager not available', 'error');
+        return;
+      }
+
+      const directTest = {
+        'user exists': !!window.authManager.currentUser,
+        'user email': window.authManager.currentUser?.email,
+        'profile exists': !!window.authManager.currentUserProfile,
+        'profile role': window.authManager.currentUserProfile?.role,
+        'isAdmin': window.authManager.isAdmin,
+        'isAdminUser': window.authManager.isAdminUser,
+        'isAuthenticated': window.authManager.isAuthenticated,
+        'initialized': window.authManager.isInitialized
+      };
+
+      let html = '<pre>';
+      for (const [key, value] of Object.entries(directTest)) {
+        html += `${key}: ${JSON.stringify(value)}\n`;
+      }
+      html += '</pre>';
+      
+      addStatus(html, 'info');
+
+      // Test email verification issue specifically
+      if (window.authManager.currentUser && !window.authManager.currentUser.emailVerified) {
+        addStatus('⚠️ Email not verified - this might be causing issues in some checks', 'info');
+      }
+    }
+
+    // Auto-run when page loads
+    setTimeout(() => {
+      if (window.authManager && window.authManager.isInitialized) {
+        addStatus('🚀 Auth manager ready - click "Run Standalone Admin Test"', 'info');
+      }
+    }, 2000);
+  </script>
+</body>
+</html>

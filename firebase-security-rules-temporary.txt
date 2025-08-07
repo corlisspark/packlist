@@ -1,0 +1,18 @@
+// TEMPORARY Firebase Security Rules for Initial Setup
+// Use these rules ONLY for initial setup, then replace with the full rules from firebase-security-rules.txt
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // TEMPORARY: Allow all reads and writes for initial setup
+    // ⚠️ IMPORTANT: Replace with proper rules after setup is complete
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+// 🚨 SECURITY WARNING 🚨
+// These rules allow anyone to read and write to your database.
+// Only use for initial setup, then immediately replace with the secure rules.

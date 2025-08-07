@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Admin Access - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    #console { background: #2c3e50; color: white; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: auto; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Direct Admin Access Test</h1>
+  
+  <div class="test-section">
+    <h3>Step 1: Sign In</h3>
+    <input type="email" id="email" placeholder="sxpxru@gmail.com" value="sxpxru@gmail.com" style="padding: 8px; width: 200px;">
+    <input type="password" id="password" placeholder="Password" style="padding: 8px; width: 150px;">
+    <button onclick="signIn()">Sign In</button>
+  </div>
+  
+  <div class="test-section">
+    <h3>Step 2: Test Admin Access</h3>
+    <button onclick="testAdminAccess()">Test Admin Panel Access</button>
+    <button onclick="checkAuthState()">Check Auth State</button>
+    <button onclick="forceCreateProfile()">Force Create Profile</button>
+    <button onclick="forceVerifyEmail()">Force Verify Email in Firebase</button>
+  </div>
+  
+  <div class="test-section">
+    <h3>Step 3: Go to Admin Panel</h3>
+    <button onclick="window.location.href='admin/admin-panel.html'">Open Admin Panel</button>
+  </div>
+  
+  <div id="results"></div>
+  <div id="console"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  
+  <!-- PacksList Scripts -->
+  <script src="config-manager.js"></script>
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+
+  <script>
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    function addToConsole(type, ...args) {
+      const consoleDiv = document.getElementById('console');
+      const timestamp = new Date().toLocaleTimeString();
+      const message = args.map(arg => 
+        typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+      ).join(' ');
+      
+      const logEntry = document.createElement('div');
+      logEntry.style.marginBottom = '5px';
+      logEntry.style.color = type === 'error' ? '#e74c3c' : type === 'warn' ? '#f39c12' : '#ecf0f1';
+      logEntry.innerHTML = `<span style="color: #95a5a6;">[${timestamp}]</span> <span style="color: #3498db;">${type.toUpperCase()}:</span> ${message}`;
+      
+      consoleDiv.appendChild(logEntry);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+    
+    console.log = function(...args) { originalLog.apply(console, args); addToConsole('log', ...args); };
+    console.error = function(...args) { originalError.apply(console, args); addToConsole('error', ...args); };
+    console.warn = function(...args) { originalWarn.apply(console, args); addToConsole('warn', ...args); };
+    
+    function addResult(message, type = 'info') {
+      const resultsDiv = document.getElementById('results');
+      const resultDiv = document.createElement('div');
+      resultDiv.className = `test-section ${type}`;
+      resultDiv.innerHTML = message;
+      resultsDiv.appendChild(resultDiv);
+    }
+    
+    async function signIn() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      if (!email || !password) {
+        addResult('Please enter email and password', 'error');
+        return;
+      }
+      
+      console.log('🔑 Signing in as:', email);
+      
+      try {
+        const result = await window.authManager.signIn(email, password);
+        if (result.success) {
+          addResult('✅ Sign in successful!', 'success');
+          console.log('✅ Sign in successful');
+        } else {
+          addResult('❌ Sign in failed: ' + result.error, 'error');
+        }
+      } catch (error) {
+        addResult('❌ Sign in error: ' + error.message, 'error');
+      }
+    }
+    
+    function checkAuthState() {
+      console.log('📊 Current Auth State:');
+      
+      if (window.authManager) {
+        const user = window.authManager.currentUser;
+        const profile = window.authManager.currentUserProfile;
+        
+        console.log('  - User exists:', !!user);
+        console.log('  - User email:', user?.email);
+        console.log('  - Email verified:', user?.emailVerified);
+        console.log('  - Profile exists:', !!profile);
+        console.log('  - Profile role:', profile?.role);
+        console.log('  - Is admin:', window.authManager.isAdmin);
+        console.log('  - Is admin user:', window.authManager.isAdminUser);
+        
+        if (window.authManager.shouldBypassEmailVerification) {
+          console.log('  - Would bypass email verification:', window.authManager.shouldBypassEmailVerification());
+        }
+        
+        addResult(`User: ${user?.email || 'None'}<br>Profile: ${profile?.role || 'None'}<br>Is Admin: ${window.authManager.isAdmin}`, 'info');
+      } else {
+        addResult('AuthManager not available', 'error');
+      }
+    }
+    
+    async function forceCreateProfile() {
+      console.log('🔧 Force creating admin profile...');
+      
+      if (!window.authManager?.currentUser) {
+        addResult('❌ No user signed in', 'error');
+        return;
+      }
+      
+      try {
+        const user = window.authManager.currentUser;
+        const profile = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || 'Admin User',
+          photoURL: user.photoURL || '',
+          emailVerified: true, // Force verified
+          role: 'super_admin',
+          permissions: ['browse', 'post', 'moderate', 'manage_users', 'view_analytics', 'manage_settings', 'manage_admins', 'delete_data'],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+          preferences: {
+            locationSharing: false,
+            emailNotifications: true,
+            pushNotifications: false
+          },
+          onboardingCompleted: true,
+          accountStatus: 'active'
+        };
+        
+        await window.db.collection('users').doc(user.uid).set(profile, { merge: true });
+        
+        // Reload profile
+        await window.authManager.loadUserProfile();
+        
+        addResult('✅ Admin profile created/updated successfully!', 'success');
+        console.log('✅ Admin profile created');
+        
+      } catch (error) {
+        addResult('❌ Error creating profile: ' + error.message, 'error');
+        console.error('❌ Error creating profile:', error);
+      }
+    }
+    
+    function testAdminAccess() {
+      console.log('🧪 Testing admin access...');
+      
+      if (!window.authManager) {
+        addResult('❌ AuthManager not available', 'error');
+        return;
+      }
+      
+      try {
+        const hasAccess = window.authManager.requireAdmin();
+        if (hasAccess) {
+          addResult('✅ Admin access test PASSED!', 'success');
+        } else {
+          addResult('❌ Admin access test FAILED', 'error');
+        }
+      } catch (error) {
+        addResult('❌ Error testing admin access: ' + error.message, 'error');
+      }
+    }
+    
+    async function forceVerifyEmail() {
+      console.log('📧 Force verifying email in Firebase Auth...');
+      
+      if (!window.authManager?.currentUser) {
+        addResult('❌ No user signed in', 'error');
+        return;
+      }
+      
+      try {
+        const user = window.authManager.currentUser;
+        console.log('Current user email verified status:', user.emailVerified);
+        
+        // Method 1: Use Firebase Admin SDK approach (if available)
+        // This requires admin privileges and won't work from client-side
+        
+        // Method 2: Update the Firestore profile to mark as verified
+        await window.db.collection('users').doc(user.uid).update({
+          emailVerified: true,
+          forceVerified: true,
+          verifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        // Method 3: Reload the user and check again
+        await user.reload();
+        console.log('After reload - email verified:', user.emailVerified);
+        
+        // Method 4: Try to manually trigger verification check
+        if (window.authManager.startEmailVerificationCheck) {
+          window.authManager.startEmailVerificationCheck();
+        }
+        
+        addResult('✅ Profile updated with forced verification flag', 'success');
+        console.log('✅ Firestore profile updated with emailVerified: true');
+        
+        // Note: Firebase Auth emailVerified cannot be changed client-side
+        if (!user.emailVerified) {
+          addResult('⚠️ Note: Firebase Auth emailVerified flag cannot be changed client-side, but profile is marked as verified', 'info');
+        }
+        
+      } catch (error) {
+        addResult('❌ Error force verifying email: ' + error.message, 'error');
+        console.error('❌ Error force verifying:', error);
+      }
+    }
+    
+    // Wait for Firebase to load
+    function waitForFirebase() {
+      if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        console.log('🔥 Firebase loaded');
+        addResult('Firebase loaded successfully', 'success');
+      } else {
+        setTimeout(waitForFirebase, 100);
+      }
+    }
+    
+    waitForFirebase();
+  </script>
+</body>
+</html>

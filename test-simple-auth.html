@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Auth Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+    button { padding: 10px 20px; margin: 10px; border: none; border-radius: 5px; cursor: pointer; }
+    .primary { background: #4CAF50; color: white; }
+    .secondary { background: #ccc; color: black; }
+    #status { padding: 20px; background: #f0f0f0; border-radius: 5px; margin: 20px 0; }
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <h1>Simple Auth Test</h1>
+  
+  <div id="status">
+    <h3>Status: <span id="status-text">Loading...</span></h3>
+    <div id="status-details"></div>
+  </div>
+  
+  <div>
+    <button id="show-signin" class="primary">Show Sign In Modal</button>
+    <button id="show-signup" class="primary">Show Sign Up Modal</button>
+    <button id="test-firebase" class="secondary">Test Firebase</button>
+  </div>
+  
+  <div id="log" style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  
+  <!-- Required for auth modals -->
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+  <script src="auth/auth-modals.js"></script>
+
+  <script>
+    // Simple logging
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'red' : type === 'success' ? 'green' : 'blue';
+      logEl.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+      console.log(message);
+    }
+    
+    function updateStatus(text, details = '', type = 'info') {
+      document.getElementById('status-text').textContent = text;
+      document.getElementById('status-details').innerHTML = details;
+      document.getElementById('status-text').className = type;
+    }
+    
+    // Test Firebase
+    function testFirebase() {
+      log('Testing Firebase...');
+      
+      if (typeof firebase === 'undefined') {
+        log('❌ Firebase not loaded', 'error');
+        return false;
+      }
+      
+      if (!firebase.apps || firebase.apps.length === 0) {
+        log('❌ Firebase not initialized', 'error');
+        return false;
+      }
+      
+      log('✅ Firebase loaded and initialized', 'success');
+      
+      try {
+        const auth = firebase.auth();
+        log('✅ Firebase Auth available', 'success');
+      } catch (e) {
+        log('❌ Firebase Auth error: ' + e.message, 'error');
+        return false;
+      }
+      
+      try {
+        const db = firebase.firestore();
+        log('✅ Firestore available', 'success');
+      } catch (e) {
+        log('❌ Firestore error: ' + e.message, 'error');
+        return false;
+      }
+      
+      return true;
+    }
+    
+    // Test auth manager
+    function testAuthManager() {
+      log('Testing AuthManager...');
+      
+      if (typeof window.authManager === 'undefined') {
+        log('❌ AuthManager not found', 'error');
+        return false;
+      }
+      
+      if (!window.authManager.isInitialized) {
+        log('⏳ AuthManager not yet initialized', 'info');
+        return false;
+      }
+      
+      log('✅ AuthManager initialized', 'success');
+      return true;
+    }
+    
+    // Test auth modals
+    function testAuthModals() {
+      log('Testing AuthModals...');
+      
+      if (typeof window.authModals === 'undefined') {
+        log('❌ AuthModals not found', 'error');
+        return false;
+      }
+      
+      if (!window.authModals.isInitialized) {
+        log('⏳ AuthModals not yet initialized', 'info');
+        return false;
+      }
+      
+      log('✅ AuthModals available and initialized', 'success');
+      return true;
+    }
+    
+    // Run all tests
+    function runTests() {
+      log('=== Running Tests ===');
+      
+      const firebaseOk = testFirebase();
+      const authManagerOk = testAuthManager();
+      const authModalsOk = testAuthModals();
+      
+      if (firebaseOk && authManagerOk && authModalsOk) {
+        updateStatus('Ready', 'All systems initialized successfully', 'success');
+        log('✅ All tests passed!', 'success');
+      } else {
+        updateStatus('Not Ready', 'Some systems not initialized', 'error');
+        log('❌ Some tests failed', 'error');
+      }
+    }
+    
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      log('DOM loaded');
+      
+      document.getElementById('show-signin').addEventListener('click', function() {
+        log('Attempting to show sign in modal...');
+        try {
+          if (window.authModals) {
+            window.authModals.showSignIn();
+            log('✅ Sign in modal triggered', 'success');
+          } else {
+            log('❌ AuthModals not available', 'error');
+          }
+        } catch (e) {
+          log('❌ Error showing sign in modal: ' + e.message, 'error');
+        }
+      });
+      
+      document.getElementById('show-signup').addEventListener('click', function() {
+        log('Attempting to show sign up modal...');
+        try {
+          if (window.authModals) {
+            window.authModals.showSignUp();
+            log('✅ Sign up modal triggered', 'success');
+          } else {
+            log('❌ AuthModals not available', 'error');
+          }
+        } catch (e) {
+          log('❌ Error showing sign up modal: ' + e.message, 'error');
+        }
+      });
+      
+      document.getElementById('test-firebase').addEventListener('click', runTests);
+      
+      // Run initial test after a delay
+      setTimeout(runTests, 1000);
+      
+      // Keep testing until everything is ready
+      const interval = setInterval(() => {
+        if (window.authManager && window.authManager.isInitialized && window.authModals) {
+          clearInterval(interval);
+          runTests();
+        }
+      }, 500);
+    });
+    
+    // Catch errors
+    window.addEventListener('error', function(e) {
+      log('❌ JavaScript Error: ' + e.error.message, 'error');
+    });
+  </script>
+</body>
+</html>

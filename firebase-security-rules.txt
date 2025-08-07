@@ -1,0 +1,296 @@
+// Firebase Security Rules for PacksList
+// Copy these rules to your Firebase Console -> Firestore Database -> Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions for role-based access control
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+             getUserData().role in ['admin', 'super_admin'];
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+             getUserData().role == 'super_admin';
+    }
+    
+    function isVerifiedUser() {
+      return isAuthenticated() && 
+             request.auth.token.email_verified == true;
+    }
+    
+    function hasPermission(permission) {
+      return isAuthenticated() && 
+             (permission in getUserData().permissions || 
+              getUserData().role in ['admin', 'super_admin']);
+    }
+    
+    // Email-based admin checking to avoid recursion in user document reads
+    function isAdminByEmail() {
+      return isAuthenticated() && 
+             request.auth.token.email in ['admin@packslist.com', 'sxpxru@gmail.com'];
+    }
+    
+    function isSuperAdminByEmail() {
+      return isAuthenticated() && 
+             request.auth.token.email in ['admin@packslist.com', 'sxpxru@gmail.com'];
+    }
+    
+    // Users collection - profile data
+    match /users/{userId} {
+      // Users can read their own profile
+      // Admins can read any profile
+      // Allow read without getUserData() to prevent recursion for new users
+      allow read: if isAuthenticated() && 
+                     (request.auth.uid == userId || isAdminByEmail());
+      
+      // Users can create and update their own profile
+      // Admins can update any profile
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && 
+                       (request.auth.uid == userId || isAdminByEmail()) && 
+                       // Prevent role escalation by non-super-admins
+                       (!(('role' in request.resource.data) && 
+                         request.resource.data.role in ['admin', 'super_admin']) || 
+                        isSuperAdminByEmail());
+      
+      // Only super admins can delete user profiles
+      allow delete: if isSuperAdminByEmail();
+    }
+    
+    // Posts collection - pack listings
+    match /posts/{postId} {
+      // Anyone can read approved posts
+      // Users can read their own posts regardless of status
+      // Admins can read all posts
+      allow read: if resource.data.status == 'approved' || 
+                     isOwner(resource.data.userId) || 
+                     isAdmin();
+      
+      // Verified users can create posts
+      allow create: if isVerifiedUser() && 
+                       hasPermission('post') &&
+                       // Ensure user can only set themselves as owner
+                       request.resource.data.userId == request.auth.uid &&
+                       // Default status should be pending
+                       request.resource.data.status == 'pending';
+      
+      // Users can update their own posts (if pending)
+      // Admins can update any post
+      allow update: if (isOwner(resource.data.userId) && 
+                        resource.data.status == 'pending') || 
+                       isAdmin();
+      
+      // Users can delete their own posts
+      // Admins can delete any post
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // Admin logs - audit trail
+    match /admin_logs/{logId} {
+      // Only admins can read logs
+      allow read: if isAdmin();
+      
+      // Only system can create logs (via server-side code)
+      // Or admins can create logs with proper attribution
+      allow create: if isAdmin() && 
+                       request.resource.data.adminId == request.auth.uid;
+      
+      // Logs cannot be updated or deleted (immutable)
+      allow update, delete: if false;
+    }
+    
+    // Moderation logs
+    match /moderation_logs/{logId} {
+      // Only admins can read moderation logs
+      allow read: if isAdmin();
+      
+      // System or admins can create moderation logs
+      allow create: if isAdmin();
+      
+      // Logs are immutable
+      allow update, delete: if false;
+    }
+    
+    // User management logs
+    match /user_management_logs/{logId} {
+      // Only admins can read user management logs
+      allow read: if isAdmin();
+      
+      // Only admins can create user management logs
+      allow create: if isAdmin() && 
+                       request.resource.data.adminId == request.auth.uid;
+      
+      // Logs are immutable
+      allow update, delete: if false;
+    }
+    
+    // Security logs
+    match /security_logs/{logId} {
+      // Only super admins can read security logs
+      allow read: if isSuperAdmin();
+      
+      // System can create security logs
+      allow create: if isAuthenticated();
+      
+      // Security logs are immutable
+      allow update, delete: if false;
+    }
+    
+    // Error logs
+    match /error_logs/{logId} {
+      // Only admins can read error logs
+      allow read: if isAdmin();
+      
+      // Anyone can create error logs (for client-side error reporting)
+      allow create: if true;
+      
+      // Error logs are immutable
+      allow update, delete: if false;
+    }
+    
+    // Security alerts
+    match /security_alerts/{alertId} {
+      // Only super admins can read security alerts
+      allow read: if isSuperAdmin();
+      
+      // System can create security alerts
+      allow create: if isAuthenticated();
+      
+      // Only super admins can mark alerts as resolved
+      allow update: if isSuperAdmin() && 
+                       // Only allow updating the resolved field
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['resolved', 'resolvedAt', 'resolvedBy']);
+      
+      // Security alerts cannot be deleted
+      allow delete: if false;
+    }
+    
+    // Configuration collection
+    match /config/{configType} {
+      // Anyone can read configuration data (needed for app functionality)
+      allow read: if true;
+      
+      // Only super admins can update configuration
+      // During development, allow any authenticated user to create configs
+      allow update: if isSuperAdmin();
+      allow create: if isAuthenticated(); // More permissive for initial setup
+      
+      // Configuration cannot be deleted
+      allow delete: if false;
+    }
+    
+    // Notifications collection
+    match /notifications/{notificationId} {
+      // Users can read their own notifications
+      allow read: if isAuthenticated() && 
+                     (resource.data.userId == request.auth.uid || isAdminByEmail());
+      
+      // System and admins can create notifications
+      allow create: if isAuthenticated() && 
+                       (isAdminByEmail() || 
+                        request.resource.data.userId == request.auth.uid);
+      
+      // Users can update their own notifications (mark as read)
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid && 
+                       // Only allow updating read status
+                       request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['read', 'readAt']);
+      
+      // Users can delete their own notifications
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // Favorites collection
+    match /favorites/{favoriteId} {
+      // Users can read their own favorites
+      allow read: if isAuthenticated() && 
+                     resource.data.userId == request.auth.uid;
+      
+      // Users can create their own favorites
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // Users can delete their own favorites
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+      
+      // Favorites cannot be updated (delete and recreate instead)
+      allow update: if false;
+    }
+    
+    // Messages collection (for vendor communication)
+    match /messages/{messageId} {
+      // Users can read messages they sent or received
+      allow read: if isOwner(resource.data.senderId) || 
+                     isOwner(resource.data.receiverId) ||
+                     isAdmin();
+      
+      // Verified users can create messages
+      allow create: if isVerifiedUser() && 
+                       request.resource.data.senderId == request.auth.uid;
+      
+      // Messages cannot be updated or deleted (immutable)
+      allow update, delete: if false;
+    }
+    
+    // Default deny rule for any other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+// Firebase Storage Security Rules (if using file uploads)
+// Copy these rules to Firebase Console -> Storage -> Rules
+
+/*
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // User profile images
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true; // Profile images are public
+      allow write: if request.auth != null && 
+                      request.auth.uid == userId &&
+                      // Limit file size to 5MB
+                      request.resource.size < 5 * 1024 * 1024 &&
+                      // Only allow image files
+                      request.resource.contentType.matches('image/.*');
+    }
+    
+    // Pack images
+    match /packs/{packId}/images/{fileName} {
+      allow read: if true; // Pack images are public once approved
+      allow write: if request.auth != null &&
+                      // Limit file size to 10MB
+                      request.resource.size < 10 * 1024 * 1024 &&
+                      // Only allow image files
+                      request.resource.contentType.matches('image/.*');
+    }
+    
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
+*/

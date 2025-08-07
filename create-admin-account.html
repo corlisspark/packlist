@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Admin Account - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    .info { background: #e3f2fd; color: #1565c0; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+    #log { background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+    .step { background: #f8f9fa; padding: 15px; margin: 15px 0; border-radius: 5px; border-left: 4px solid #4CAF50; }
+    .form-group { margin: 15px 0; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 100%; box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <h1>🔧 Create Admin Account Setup</h1>
+  
+  <div class="info">
+    <h3>📋 Current Status</h3>
+    <p>The Firebase security rules have been updated to recognize <strong>sxpxru@gmail.com</strong> as an admin, but we need to:</p>
+    <ol>
+      <li>Apply the updated security rules to Firebase</li>
+      <li>Create an account with sxpxru@gmail.com</li>
+      <li>Update the user profile to admin role</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h3>Step 1: Apply Updated Security Rules</h3>
+    <p>First, you need to apply the updated Firebase security rules:</p>
+    <ol>
+      <li>Go to <a href="https://console.firebase.google.com/project/cw55hf8nvt/firestore/rules" target="_blank">Firebase Console - Rules</a></li>
+      <li>Copy the content from <code>firebase-security-rules.txt</code></li>
+      <li>Paste it and click <strong>"Publish"</strong></li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h3>Step 2: Create Admin Account</h3>
+    <p>Create an account using the PacksList sign-up with:</p>
+    <div class="form-group">
+      <label>Email:</label>
+      <input type="text" value="sxpxru@gmail.com" readonly style="background: #f0f0f0;">
+    </div>
+    <div class="form-group">
+      <label>Password:</label>
+      <input type="password" id="admin-password" placeholder="Choose a secure password">
+    </div>
+    <p><a href="index.html" target="_blank">Open PacksList → Sign Up</a></p>
+  </div>
+
+  <div class="step">
+    <h3>Step 3: Update User Profile to Admin (Manual)</h3>
+    <div id="manual-setup">
+      <p>After creating the account, we'll manually update the user profile to admin role:</p>
+      
+      <div id="status" class="status warning">
+        <strong>Status:</strong> <span id="status-text">Ready to update admin profile</span>
+      </div>
+      
+      <button onclick="findAndUpdateAdminUser()">Find & Update sxpxru@gmail.com to Admin</button>
+      <button onclick="checkUserStatus()">Check Current User Status</button>
+      <button onclick="clearLog()">Clear Log</button>
+    </div>
+  </div>
+
+  <h3>Log:</h3>
+  <div id="log"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth/auth-manager.js"></script>
+
+  <script>
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'black';
+      logEl.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    function updateStatus(text, type = 'info') {
+      const statusEl = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      statusText.textContent = text;
+      statusEl.className = `status ${type}`;
+    }
+    
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+
+    async function findAndUpdateAdminUser() {
+      updateStatus('Searching for sxpxru@gmail.com account...', 'warning');
+      log('Looking for user account with email: sxpxru@gmail.com');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        updateStatus('Error: Firebase not ready', 'error');
+        return;
+      }
+
+      try {
+        // Search for user by email
+        const usersQuery = await window.db.collection('users')
+          .where('email', '==', 'sxpxru@gmail.com')
+          .get();
+
+        if (usersQuery.empty) {
+          log('❌ No user found with email sxpxru@gmail.com', 'error');
+          log('Please create an account first using the PacksList sign-up', 'warning');
+          updateStatus('User account not found - create account first', 'error');
+          return;
+        }
+
+        const userDoc = usersQuery.docs[0];
+        const userId = userDoc.id;
+        const userData = userDoc.data();
+        
+        log(`✅ Found user account: ${userId}`, 'success');
+        log(`Current role: ${userData.role || 'user'}`, 'info');
+
+        // Update to admin role
+        const adminUpdate = {
+          role: 'super_admin',
+          permissions: ['browse', 'post', 'moderate', 'manage_users', 'view_analytics', 'manage_settings', 'manage_admins', 'delete_data'],
+          updatedAt: new Date().toISOString(),
+          updatedBy: 'system_admin_setup'
+        };
+
+        await window.db.collection('users').doc(userId).update(adminUpdate);
+        
+        log('✅ User profile updated to super_admin successfully!', 'success');
+        log('👑 sxpxru@gmail.com now has full admin privileges', 'success');
+        updateStatus('Admin account setup complete!', 'success');
+
+      } catch (error) {
+        log(`❌ Error updating user profile: ${error.message}`, 'error');
+        updateStatus('Failed to update admin profile', 'error');
+      }
+    }
+
+    async function checkUserStatus() {
+      log('Checking current user status...');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        return;
+      }
+
+      try {
+        const usersQuery = await window.db.collection('users')
+          .where('email', '==', 'sxpxru@gmail.com')
+          .get();
+
+        if (usersQuery.empty) {
+          log('❌ No user found with email sxpxru@gmail.com', 'error');
+          log('ℹ️ You need to create an account first', 'warning');
+          return;
+        }
+
+        const userData = usersQuery.docs[0].data();
+        log('✅ User account found', 'success');
+        log(`📧 Email: ${userData.email}`, 'info');
+        log(`👤 Role: ${userData.role || 'user'}`, 'info');
+        log(`🔑 Permissions: ${(userData.permissions || []).join(', ')}`, 'info');
+        log(`📅 Created: ${userData.createdAt?.toDate?.()?.toLocaleString() || 'N/A'}`, 'info');
+        log(`🔄 Last updated: ${userData.updatedAt || 'N/A'}`, 'info');
+
+      } catch (error) {
+        log(`❌ Error checking user status: ${error.message}`, 'error');
+      }
+    }
+
+    // Wait for Firebase to initialize
+    setTimeout(() => {
+      if (window.db) {
+        log('✅ Firebase initialized and ready');
+        updateStatus('Ready to setup admin account', 'success');
+      } else {
+        log('❌ Firebase not ready after timeout', 'error');
+        updateStatus('Error - Firebase not ready', 'error');
+      }
+    }, 2000);
+  </script>
+</body>
+</html>

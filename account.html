@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account - PacksList</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth/auth-styles.css">
+  <link rel="stylesheet" href="auth/account-styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">🌿</div>
+          <span class="logo-text">PacksList</span>
+          <span class="location-indicator" id="location-indicator">• Detecting...</span>
+        </div>
+        <div class="header-actions">
+          <div class="user-info">
+            <span id="user-indicator">Guest</span>
+          </div>
+          <div class="auth-buttons guest-only">
+            <button class="auth-button" onclick="window.authModals?.showSignIn()">Sign In</button>
+            <button class="auth-button auth-button-primary" onclick="window.authModals?.showSignUp()">Sign Up</button>
+          </div>
+          <nav class="header-nav">
+            <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      
+      <!-- Guest View -->
+      <div id="guest-account" class="guest-only account-section">
+        <div class="account-hero">
+          <h1>Join PacksList</h1>
+          <p>Create an account to post packs, save favorites, and connect with vendors in your area.</p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" onclick="window.authModals?.showSignUp()">
+              Get Started
+            </button>
+            <button class="btn btn-outline" onclick="window.authModals?.showSignIn()">
+              Sign In
+            </button>
+          </div>
+        </div>
+        
+        <div class="account-features">
+          <h2>What you can do with an account:</h2>
+          <div class="feature-grid">
+            <div class="feature-card">
+              <div class="feature-icon">📦</div>
+              <h3>Post Packs</h3>
+              <p>List your products and reach customers in your area</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">⭐</div>
+              <h3>Save Favorites</h3>
+              <p>Bookmark packs and vendors you want to remember</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">💬</div>
+              <h3>Message Vendors</h3>
+              <p>Contact sellers directly about their products</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">📍</div>
+              <h3>Location-Based Results</h3>
+              <p>See packs and vendors closest to you first</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authenticated User View -->
+      <div id="user-account" class="auth-required account-section" style="display: none;">
+        <div class="account-container">
+          
+          <!-- Profile Section -->
+          <div class="profile-section">
+            <div class="profile-header">
+              <div class="profile-avatar">
+                <div id="profile-avatar-display" class="avatar-circle">
+                  <span id="profile-initials">??</span>
+                </div>
+                <button class="avatar-edit-btn" onclick="profileManager.editAvatar()">✏️</button>
+              </div>
+              <div class="profile-info">
+                <h1 id="profile-display-name">Loading...</h1>
+                <p id="profile-email">loading@example.com</p>
+                <div class="profile-badges">
+                  <span id="profile-admin-badge" class="badge admin-badge" style="display: none;">👑 Admin</span>
+                  <span id="profile-verified-badge" class="badge verified-badge" style="display: none;">✓ Verified</span>
+                </div>
+              </div>
+              <div class="profile-actions">
+                <button class="btn btn-outline" onclick="profileManager.editProfile()">
+                  Edit Profile
+                </button>
+                <button class="btn btn-link" onclick="window.authManager.signOut()">
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Stats -->
+          <div class="account-stats">
+            <div class="stat-card">
+              <div class="stat-number" id="user-packs-count">0</div>
+              <div class="stat-label">Packs Posted</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="user-favorites-count">0</div>
+              <div class="stat-label">Favorites</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="user-messages-count">0</div>
+              <div class="stat-label">Messages</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="user-rating">5.0</div>
+              <div class="stat-label">Rating</div>
+            </div>
+          </div>
+
+          <!-- Account Sections -->
+          <div class="account-sections">
+            
+            <!-- My Packs -->
+            <div class="section-card">
+              <div class="section-header">
+                <h3>My Packs</h3>
+                <a href="new.html" class="btn btn-outline">+ Add Pack</a>
+              </div>
+              <div id="user-packs-list" class="packs-list">
+                <div class="loading">Loading your packs...</div>
+              </div>
+            </div>
+
+            <!-- Favorites -->
+            <div class="section-card">
+              <div class="section-header">
+                <h3>Favorite Packs</h3>
+                <button class="btn btn-link" onclick="profileManager.clearFavorites()">Clear All</button>
+              </div>
+              <div id="user-favorites-list" class="packs-list">
+                <div class="loading">Loading favorites...</div>
+              </div>
+            </div>
+
+            <!-- Account Settings -->
+            <div class="section-card">
+              <div class="section-header">
+                <h3>Account Settings</h3>
+              </div>
+              <div class="settings-list">
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive updates about your packs and messages</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="email-notifications-toggle">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Location Sharing</h4>
+                    <p>Share your location for better recommendations</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="location-sharing-toggle">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Profile Visibility</h4>
+                    <p>Make your profile visible to other users</p>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="profile-visibility-toggle" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Admin Panel Access -->
+            <div class="section-card admin-only" style="display: none;">
+              <div class="section-header">
+                <h3>Admin Panel</h3>
+              </div>
+              <div class="admin-actions">
+                <a href="/admin/admin-panel.html" class="btn btn-primary">
+                  🛠️ Access Admin Panel
+                </a>
+                <p>Manage users, moderate content, and configure the platform.</p>
+              </div>
+            </div>
+
+            <!-- Account Actions -->
+            <div class="section-card">
+              <div class="section-header">
+                <h3>Account Actions</h3>
+              </div>
+              <div class="action-list">
+                <button class="action-btn" onclick="profileManager.changePassword()">
+                  🔒 Change Password
+                </button>
+                <button class="action-btn" onclick="profileManager.downloadData()">
+                  📁 Download My Data
+                </button>
+                <button class="action-btn danger" onclick="profileManager.deleteAccount()">
+                  🗑️ Delete Account
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Toolbar -->
+    <div class="bottom-toolbar">
+      <nav class="toolbar-nav">
+        <!-- Dynamic navigation will be rendered here by navigation-manager.js -->
+      </nav>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="config-manager.js"></script>
+  <script src="cache-manager.js"></script>
+  <script src="content-manager.js"></script>
+  <script src="navigation-manager.js"></script>
+  <script src="page-manager.js"></script>
+  <script src="vendor-manager.js"></script>
+  <script src="dynamic-location-manager.js"></script>
+  <script src="location-utils.js"></script>
+  <script src="security/input-validator.js"></script>
+  <script src="auth/auth-manager.js"></script>
+  <script src="auth/auth-modals.js"></script>
+  <script src="auth/onboarding-manager.js"></script>
+  <script src="notifications/notification-manager.js"></script>
+  <script src="auth/profile-manager.js"></script>
+</body>
+</html>

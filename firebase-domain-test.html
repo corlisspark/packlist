@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Domain Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 3px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>Firebase Domain Configuration Test</h1>
+  
+  <div id="results"></div>
+  
+  <button onclick="testAuth()">Test Firebase Auth</button>
+  
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  
+  <script>
+    const results = document.getElementById('results');
+    
+    function addResult(message, type = 'info') {
+      const div = document.createElement('div');
+      div.className = `status ${type}`;
+      div.innerHTML = message;
+      results.appendChild(div);
+    }
+    
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDWkbZRee5HZHTRKucfH-6rXezkgmMy29k",
+      authDomain: "cw55hf8nvt.firebaseapp.com",
+      projectId: "cw55hf8nvt"
+    };
+    
+    // Initialize Firebase
+    try {
+      firebase.initializeApp(firebaseConfig);
+      addResult('✅ Firebase initialized successfully', 'success');
+    } catch (error) {
+      addResult(`❌ Firebase initialization failed: ${error.message}`, 'error');
+    }
+    
+    // Test current domain
+    addResult(`🌐 Current domain: <strong>${window.location.origin}</strong>`, 'info');
+    addResult(`🔧 Configured authDomain: <strong>${firebaseConfig.authDomain}</strong>`, 'info');
+    
+    async function testAuth() {
+      try {
+        addResult('🧪 Testing Firebase Auth with dummy signup...', 'info');
+        
+        const auth = firebase.auth();
+        
+        // Try to create a user with obviously fake credentials to see the exact error
+        await auth.createUserWithEmailAndPassword('test@test.com', 'password123');
+        
+      } catch (error) {
+        addResult(`📋 Firebase Error Details:<br>
+          <strong>Code:</strong> ${error.code}<br>
+          <strong>Message:</strong> ${error.message}<br>
+          <pre>${JSON.stringify(error, null, 2)}</pre>`, 'error');
+        
+        if (error.code === 'auth/unauthorized-domain') {
+          addResult(`🚨 <strong>SOLUTION NEEDED:</strong> The current domain (${window.location.origin}) is not authorized in Firebase.<br><br>
+          <strong>To fix this:</strong><br>
+          1. Go to Firebase Console → Authentication → Settings → Authorized domains<br>
+          2. Add: <code>localhost</code>, <code>127.0.0.1</code>, and <code>${window.location.hostname}</code><br>
+          3. Or use the authDomain URL: <code>${firebaseConfig.authDomain}</code>`, 'warning');
+        }
+      }
+    }
+    
+    // Auto-test after load
+    setTimeout(testAuth, 1000);
+  </script>
+</body>
+</html>

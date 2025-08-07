@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup Configs - PacksList</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+    .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+    .error { background: #ffebee; color: #c62828; }
+    .success { background: #e8f5e8; color: #2e7d32; }
+    .warning { background: #fff3e0; color: #ef6c00; }
+    button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; background: #4CAF50; color: white; }
+    button:hover { background: #45a049; }
+    #log { background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 12px; }
+    .config-item { margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>PacksList Configuration Setup</h1>
+  <p>This page will create the initial configuration data in Firebase.</p>
+  
+  <div id="status" class="status warning">
+    <strong>Status:</strong> <span id="status-text">Ready to setup</span>
+  </div>
+  
+  <button onclick="setupConfigs()">Setup All Configurations</button>
+  <button onclick="testConfigAccess()">Test Config Access</button>
+  <button onclick="clearLog()">Clear Log</button>
+  
+  <h3>Configuration Items to Create:</h3>
+  <div id="config-list">
+    <div class="config-item">🏙️ <strong>cities</strong> - Major cities and coordinates</div>
+    <div class="config-item">📦 <strong>product-types</strong> - Available pack categories</div>
+    <div class="config-item">🏪 <strong>vendor-categories</strong> - Delivery methods</div>
+    <div class="config-item">🗺️ <strong>metro-areas</strong> - Service area boundaries</div>
+    <div class="config-item">💬 <strong>ui-strings</strong> - Interface text and labels</div>
+    <div class="config-item">⚙️ <strong>region-settings</strong> - Regional configuration</div>
+  </div>
+  
+  <h3>Setup Log:</h3>
+  <div id="log"></div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function log(message, type = 'info') {
+      const logEl = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'black';
+      logEl.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    
+    function updateStatus(text, type = 'info') {
+      const statusEl = document.getElementById('status');
+      const statusText = document.getElementById('status-text');
+      statusText.textContent = text;
+      statusEl.className = `status ${type}`;
+    }
+    
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+    }
+
+    const configs = {
+      'cities': {
+        cities: [
+          { name: 'San Francisco', state: 'CA', coordinates: { lat: 37.7749, lng: -122.4194 } },
+          { name: 'Los Angeles', state: 'CA', coordinates: { lat: 34.0522, lng: -118.2437 } },
+          { name: 'New York', state: 'NY', coordinates: { lat: 40.7128, lng: -74.0060 } },
+          { name: 'Chicago', state: 'IL', coordinates: { lat: 41.8781, lng: -87.6298 } },
+          { name: 'Austin', state: 'TX', coordinates: { lat: 30.2672, lng: -97.7431 } }
+        ],
+        lastUpdated: new Date().toISOString()
+      },
+      'product-types': {
+        types: [
+          { id: 'high-tolerance', name: 'High Tolerance', icon: '🔥' },
+          { id: 'bozo-headstash', name: 'Bozo Headstash', icon: '🤡' },
+          { id: 'deep-fried', name: 'Deep Fried', icon: '🍟' },
+          { id: 'gumbo', name: 'Gumbo', icon: '🍲' },
+          { id: 'other', name: 'Other', icon: '📦' }
+        ],
+        lastUpdated: new Date().toISOString()
+      },
+      'vendor-categories': {
+        categories: [
+          { id: 'delivery', name: 'Delivery', icon: '🚗' },
+          { id: 'pickup', name: 'Pickup', icon: '🏪' },
+          { id: 'meetup', name: 'Meetup', icon: '🤝' }
+        ],
+        lastUpdated: new Date().toISOString()
+      },
+      'metro-areas': {
+        areas: [
+          {
+            name: 'San Francisco Bay Area',
+            bounds: { north: 38.5, south: 36.5, east: -121.0, west: -123.5 },
+            cities: ['San Francisco', 'Oakland', 'San Jose', 'Berkeley']
+          },
+          {
+            name: 'Los Angeles Metro',
+            bounds: { north: 34.8, south: 33.5, east: -117.5, west: -119.0 },
+            cities: ['Los Angeles', 'Long Beach', 'Anaheim', 'Santa Monica']
+          }
+        ],
+        lastUpdated: new Date().toISOString()
+      },
+      'ui-strings': {
+        strings: {
+          appName: 'PacksList',
+          tagline: 'Local Delivery',
+          searchPlaceholder: 'Search for packs...',
+          noResultsFound: 'No packs found in this area',
+          signInPrompt: 'Sign in to post packs',
+          emailVerificationRequired: 'Please verify your email to continue'
+        },
+        lastUpdated: new Date().toISOString()
+      },
+      'region-settings': {
+        defaultRegion: 'sf-bay-area',
+        supportedRegions: ['sf-bay-area', 'la-metro', 'ny-metro'],
+        maxSearchRadius: 50,
+        defaultSearchRadius: 10,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+
+    async function setupConfigs() {
+      updateStatus('Setting up configurations...', 'warning');
+      log('Starting configuration setup...');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        updateStatus('Error: Firebase not ready', 'error');
+        return;
+      }
+
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const [configType, configData] of Object.entries(configs)) {
+        try {
+          log(`Creating config: ${configType}...`);
+          await window.db.collection('config').doc(configType).set(configData);
+          log(`✅ Config '${configType}' created successfully`, 'success');
+          successCount++;
+        } catch (error) {
+          log(`❌ Failed to create config '${configType}': ${error.message}`, 'error');
+          errorCount++;
+        }
+      }
+
+      if (errorCount === 0) {
+        updateStatus(`All configurations created successfully (${successCount} items)`, 'success');
+        log(`🎉 Setup complete! Created ${successCount} configuration documents.`, 'success');
+      } else {
+        updateStatus(`Setup completed with errors (${successCount} success, ${errorCount} errors)`, 'error');
+      }
+    }
+
+    async function testConfigAccess() {
+      log('Testing configuration access...');
+      
+      if (!window.db) {
+        log('❌ Firestore not initialized', 'error');
+        return;
+      }
+
+      for (const configType of Object.keys(configs)) {
+        try {
+          const doc = await window.db.collection('config').doc(configType).get();
+          if (doc.exists) {
+            log(`✅ Can read config: ${configType}`, 'success');
+          } else {
+            log(`⚠️ Config does not exist: ${configType}`, 'warning');
+          }
+        } catch (error) {
+          log(`❌ Cannot read config ${configType}: ${error.message}`, 'error');
+        }
+      }
+    }
+
+    // Wait for Firebase to initialize
+    setTimeout(() => {
+      if (window.db) {
+        log('✅ Firebase initialized and ready');
+        updateStatus('Ready - Firebase connected', 'success');
+      } else {
+        log('❌ Firebase not ready after timeout', 'error');
+        updateStatus('Error - Firebase not ready', 'error');
+      }
+    }, 2000);
+  </script>
+</body>
+</html>
